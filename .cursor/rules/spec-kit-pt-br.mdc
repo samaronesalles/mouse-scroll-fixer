@@ -1,0 +1,26 @@
+---
+description: Documentação e artefatos do Spec Kit em português brasileiro (pt-BR)
+alwaysApply: true
+---
+
+# Spec Kit — idioma pt-BR
+
+Ao **criar, atualizar ou estender** qualquer documentação ou artefato do fluxo Spec Kit (comandos `/speckit.*`, SDD), use **sempre português brasileiro (pt-BR)** como idioma único do texto.
+
+## O que inclui
+
+- Texto corrido: títulos, parágrafos, listas, tabelas, notas e comentários em Markdown.
+- Histórias de usuário, critérios de aceite, requisitos funcionais e não funcionais.
+- Planos técnicos, tarefas, checklists, clarificações e resumos gerados pelo fluxo.
+- Nomes de seções e rótulos legíveis por humanos (mantenha **identificadores técnicos** — paths, nomes de API, flags, variáveis de ambiente — como no código, sem traduzir à força).
+
+## Estilo
+
+- Vocabulário e ortografia **brasileiros** (ex.: “implementação”, “usuário”, “requisito”).
+- Datas e exemplos numéricos no formato local quando fizer sentido (ex.: dd/mm/aaaa).
+- Evite misturar inglês em frases narrativas; termos inevitáveis da stack podem permanecer em inglês entre parênteses na primeira ocorrência, se ajudar a clareza.
+
+## O que não fazer
+
+- Não produzir documentação Spec Kit predominantemente em inglês ou “portunhol” quando o público for o time do repositório em pt-BR.
+- Não traduzir nomes de arquivos, branches ou comandos que quebrariam automação ou convenções da ferramenta.
