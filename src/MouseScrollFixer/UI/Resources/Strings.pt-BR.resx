@@ -79,11 +79,14 @@
   <data name="MainSettings_Title" xml:space="preserve">
     <value>Configurações — MouseScrollFixer</value>
   </data>
+  <data name="MainSettings_TabSettings" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
   <data name="MainSettings_Activation" xml:space="preserve">
     <value>Ativar o fix de scroll (lista de inclusão)</value>
   </data>
   <data name="MainSettings_StatusFixOn" xml:space="preserve">
-    <value>Estado: fix ligado — a lista de inclusão aplica-se à janela em foco.</value>
+    <value>Estado: fix ligado — a lista de inclusão aplica-se ao aplicativo da janela sob o ponteiro do rato.</value>
   </data>
   <data name="MainSettings_StatusFixOff" xml:space="preserve">
     <value>Estado: fix desligado — o scroll não é alterado por este utilitário.</value>
@@ -132,5 +135,11 @@
   </data>
   <data name="Conflict_BalloonText" xml:space="preserve">
     <value>Detetámos processos que costumam alterar o scroll ou o rato ({0}). O MouseScrollFixer não desativa automaticamente outros programas — ajuste ou desative um dos lados se notar comportamento estranho.</value>
+  </data>
+  <data name="Tray_StartupBalloonTitle" xml:space="preserve">
+    <value>MouseScrollFixer</value>
+  </data>
+  <data name="Tray_StartupBalloonText" xml:space="preserve">
+    <value>O programa iniciou e está a correr na área de notificação (bandeja). Utilize o ícone para abrir as configurações ou sair.</value>
   </data>
 </root>

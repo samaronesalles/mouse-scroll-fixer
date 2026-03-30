@@ -3,6 +3,7 @@ using System.Threading;
 using MouseScrollFixer.App;
 using MouseScrollFixer.Core.Configuration;
 using MouseScrollFixer.Native.Win32;
+using MouseScrollFixer.SingleInstance;
 using MouseScrollFixer.UI.Resources;
 
 namespace MouseScrollFixer;
@@ -15,6 +16,25 @@ internal static class Program
         Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pt-BR");
         Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("pt-BR");
 
+        if (!SingleInstanceCoordinator.TryAcquireSingleton(out var singletonMutex))
+        {
+            SingleInstanceCoordinator.NotifyExistingInstance();
+            return;
+        }
+
+        try
+        {
+            RunApplication();
+        }
+        finally
+        {
+            singletonMutex.Dispose();
+        }
+    }
+
+    private static void RunApplication()
+    {
+        // RF-010: sem telemetria nem envio remoto — apenas leitura/gravação local de configuração.
         ApplicationConfiguration.Initialize();
 
         if (!OsVersionHelper.IsWindows11OrGreater())

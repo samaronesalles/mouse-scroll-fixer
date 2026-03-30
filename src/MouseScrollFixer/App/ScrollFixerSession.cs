@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using MouseScrollFixer.Core.Configuration;
 using MouseScrollFixer.Core.ScrollNormalization;
@@ -15,10 +14,8 @@ namespace MouseScrollFixer.App;
 internal sealed class ScrollFixerSession : IDisposable
 {
     private readonly LowLevelMouseHook _mouseHook;
-    private AppConfig _config;
+    private AppConfig _config = null!;
     private HashSet<string> _paths = new(StringComparer.OrdinalIgnoreCase);
-    private nint _cachedForegroundHwnd;
-    private string? _cachedNormalizedPath;
     private bool _disposed;
 
     public ScrollFixerSession(AppConfig config)
@@ -38,7 +35,6 @@ internal sealed class ScrollFixerSession : IDisposable
         ObjectDisposedException.ThrowIf(_disposed, this);
         _config = config;
         RebuildPaths();
-        InvalidateForegroundCache();
 
         if (_config.Activation.Enabled)
             _mouseHook.TryInstall();
@@ -58,12 +54,6 @@ internal sealed class ScrollFixerSession : IDisposable
         }
     }
 
-    private void InvalidateForegroundCache()
-    {
-        _cachedForegroundHwnd = 0;
-        _cachedNormalizedPath = null;
-    }
-
     private void OnMouseMessage(int nCode, nint wParam, nint lParam)
     {
         if (_disposed || nCode != 0)
@@ -79,9 +69,12 @@ internal sealed class ScrollFixerSession : IDisposable
         if (msg != Win32Constants.WM_MOUSEWHEEL)
             return;
 
-        if (!TryResolveForegroundExeNormalized(out var normalizedPath))
+        var st = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+
+        if (!WindowTargetResolver.TryGetExecutablePathFromPoint(st.pt, out var path))
             return;
 
+        var normalizedPath = AppConfigValidator.NormalizeExecutablePath(path);
         if (!_paths.Contains(normalizedPath))
             return;
 
@@ -89,7 +82,6 @@ internal sealed class ScrollFixerSession : IDisposable
         if (!behavior.TouchpadSameAsWheel)
             return;
 
-        var st = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
         var rawDelta = ScrollNormalizer.GetVerticalWheelDelta(st.mouseData);
         var newDelta = ScrollNormalizer.NormalizeVerticalWheelDelta(rawDelta, behavior);
         if (newDelta == rawDelta)
@@ -97,31 +89,6 @@ internal sealed class ScrollFixerSession : IDisposable
 
         st.mouseData = ScrollNormalizer.SetVerticalWheelDelta(st.mouseData, newDelta);
         Marshal.StructureToPtr(st, lParam, false);
-    }
-
-    private bool TryResolveForegroundExeNormalized([NotNullWhen(true)] out string? normalizedPath)
-    {
-        normalizedPath = null;
-        var hwnd = User32.GetForegroundWindow();
-        if (hwnd == 0)
-            return false;
-
-        if (hwnd == _cachedForegroundHwnd && _cachedNormalizedPath is not null)
-        {
-            normalizedPath = _cachedNormalizedPath;
-            return true;
-        }
-
-        if (!WindowTargetResolver.TryGetExecutablePathForForegroundWindow(out var path))
-        {
-            InvalidateForegroundCache();
-            return false;
-        }
-
-        _cachedForegroundHwnd = hwnd;
-        _cachedNormalizedPath = AppConfigValidator.NormalizeExecutablePath(path);
-        normalizedPath = _cachedNormalizedPath;
-        return true;
     }
 
     public void Dispose()

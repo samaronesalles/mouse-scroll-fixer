@@ -1,4 +1,5 @@
 using MouseScrollFixer.Core.Configuration;
+using Xunit;
 
 namespace MouseScrollFixer.Tests.Configuration;
 
@@ -113,6 +114,6 @@ public class AppConfigValidatorTests
     {
         var temp = Path.Combine(Path.GetTempPath(), "msf_norm_test.exe");
         var normalized = AppConfigValidator.NormalizeExecutablePath(" " + temp + " ");
-        Assert.Equal(Path.GetFullPath(temp), normalized, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(Path.GetFullPath(temp), normalized, StringComparer.OrdinalIgnoreCase);
     }
 }

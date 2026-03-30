@@ -11,7 +11,7 @@ namespace MouseScrollFixer.Core.ScrollNormalization;
 internal static class WindowTargetResolver
 {
     /// <summary>
-    /// Usa a janela em primeiro plano (critério de aceite P1: foco / primeiro plano).
+    /// Resolução por janela em primeiro plano (utilitário; o fix de scroll usa <see cref="TryGetExecutablePathFromPoint"/>).
     /// </summary>
     public static bool TryGetExecutablePathForForegroundWindow([NotNullWhen(true)] out string? path)
     {

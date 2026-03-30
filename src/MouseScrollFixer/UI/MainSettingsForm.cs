@@ -12,6 +12,7 @@ internal sealed partial class MainSettingsForm : Form
     private readonly ScrollFixerSession _session;
     private readonly Action? _onConfigChanged;
 
+    private TabControl _tabControl = null!;
     private CheckBox _activationCheckBox = null!;
     private Label _helpLabel = null!;
     private Label _statusLabel = null!;
@@ -48,9 +49,20 @@ internal sealed partial class MainSettingsForm : Form
         }
     }
 
+    /// <summary>RF-011: segundo arranque — separador de configurações visível.</summary>
+    internal void SelectConfigurationTab()
+    {
+        if (_tabControl.TabCount > 0)
+            _tabControl.SelectedIndex = 0;
+    }
+
     private void BuildUi()
     {
         Text = UiStrings.Get("MainSettings_Title");
+
+        _tabControl = new TabControl { Dock = DockStyle.Fill };
+        var settingsPage = new TabPage(UiStrings.Get("MainSettings_TabSettings"));
+        _tabControl.TabPages.Add(settingsPage);
 
         var layout = new TableLayoutPanel
         {
@@ -131,7 +143,8 @@ internal sealed partial class MainSettingsForm : Form
         layout.Controls.Add(_listView, 0, 3);
         layout.Controls.Add(buttons, 0, 4);
 
-        Controls.Add(layout);
+        settingsPage.Controls.Add(layout);
+        Controls.Add(_tabControl);
     }
 
     private void LoadFromConfig()
