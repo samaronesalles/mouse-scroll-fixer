@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Globalization;
 using MouseScrollFixer.App;
 using MouseScrollFixer.Core.Configuration;
@@ -28,6 +29,7 @@ internal sealed partial class MainSettingsForm : Form
         _session = session;
         _onConfigChanged = onConfigChanged;
         InitializeComponent();
+        Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         BuildUi();
         LoadFromConfig();
     }

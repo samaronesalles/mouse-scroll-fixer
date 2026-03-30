@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Globalization;
 using System.IO.Pipes;
 using System.Text;
@@ -32,6 +33,7 @@ internal sealed class TrayApplication : IDisposable
     private readonly AppConfigStore _store;
     private readonly AppConfig _config;
     private readonly ScrollFixerSession _session;
+    private readonly Icon? _trayIcon;
     private readonly NotifyIcon _notifyIcon;
     private readonly EventHandler _applicationExitHandler;
     private readonly ContextMenuStrip _contextMenu;
@@ -50,9 +52,10 @@ internal sealed class TrayApplication : IDisposable
         _applicationExitHandler = (_, _) => Dispose();
         Application.ApplicationExit += _applicationExitHandler;
 
+        _trayIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         _notifyIcon = new NotifyIcon
         {
-            Icon = SystemIcons.Application,
+            Icon = _trayIcon ?? SystemIcons.Application,
             Visible = true
         };
 
@@ -244,6 +247,7 @@ internal sealed class TrayApplication : IDisposable
         Application.ApplicationExit -= _applicationExitHandler;
         _notifyIcon.Visible = false;
         _notifyIcon.Dispose();
+        _trayIcon?.Dispose();
         _contextMenu.Dispose();
         _settingsForm?.Dispose();
 
