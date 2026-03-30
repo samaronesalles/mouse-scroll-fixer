@@ -1,0 +1,15 @@
+<Project>
+  <Import Project="$(MSBuildThisFileDirectory)Version.props" />
+  <PropertyGroup>
+    <!--
+      Saídas de build centralizadas sob a raiz publish\ do repositório.
+      - out\<Projeto>\<Configuration>\<TFM>\ — DLL/EXE e artefatos finais
+      - obj\<Projeto>\ — ficheiros intermédios (MSBuild)
+      MSBuildProjectExtensionsPath deve coincidir com BaseIntermediateOutputPath; caso contrário,
+      o SDK continua a gerar em src\...\obj\ ao lado do .csproj (duplicados e erros CS0579).
+    -->
+    <BaseOutputPath>$(MSBuildThisFileDirectory)publish\out\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)publish\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
+</Project>

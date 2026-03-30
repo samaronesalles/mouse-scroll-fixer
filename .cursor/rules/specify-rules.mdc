@@ -1,4 +1,4 @@
-﻿---
+---
 description: Project Development Guidelines
 globs: ["**/*"]
 alwaysApply: true
@@ -20,9 +20,16 @@ src/
 tests/
 ```
 
+## Versionamento (SemVer)
+
+- Versão da app: editar manualmente `Version.props` na raiz (`<Version>MAJOR.MINOR.PATCH</Version>`); ver `docs/versioning.md`.
+
 ## Commands
 
-# Add commands for 
+- Build (Release): `dotnet build MouseScrollFixer.sln -c Release`
+- Testes: `dotnet test MouseScrollFixer.sln -c Release`
+- Executável da app: `publish\out\MouseScrollFixer\Release\net8.0-windows\MouseScrollFixer.exe` (saídas centralizadas; ver regra `build-output-centralizado.mdc`)
+- Publicar para pasta única (ex.: `publish\app`): `dotnet publish src\MouseScrollFixer\MouseScrollFixer.csproj -c Release -o publish\app`
 
 ## Code Style
 

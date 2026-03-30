@@ -1,0 +1,11 @@
+<Project>
+  <!--
+    Versão SemVer da aplicação (MAJOR.MINOR.PATCH, opcionalmente com sufixo: 1.2.3-beta.1).
+    Edite este ficheiro manualmente quando quiser publicar uma nova versão — não há bump automático.
+  -->
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <!-- Sem anexar hash de commit ao InformationalVersion — a UI mostra o SemVer que definir em Version. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+</Project>

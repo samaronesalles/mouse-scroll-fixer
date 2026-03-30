@@ -1,0 +1,33 @@
+---
+description: Onde fica o build e o executável para testes
+globs: ["**/*.csproj", "**/Directory.Build.props", "**/*.sln"]
+alwaysApply: true
+---
+
+# Saída de build centralizada (`publish\`)
+
+Toda a compilação MSBuild deste repositório usa `Directory.Build.props` na raiz: **não** são criados `bin\` nem `obj\` dentro de `src\` ou `tests\`.
+
+## Local oficial (única raiz)
+
+| Conteúdo | Caminho |
+|----------|---------|
+| Executável e DLLs da app | `publish\out\MouseScrollFixer\<Debug\|Release>\net8.0-windows\` |
+| Artefatos de testes | `publish\out\MouseScrollFixer.Tests\<Debug\|Release>\net8.0-windows\` |
+| Ficheiros intermédios MSBuild | `publish\obj\<NomeDoProjeto>\` |
+
+O **último executável** da app após `dotnet build` está sempre em `publish\out\MouseScrollFixer\<config>\net8.0-windows\MouseScrollFixer.exe` (para testes manuais, preferir **Release** quando for o caso).
+
+## Comandos recomendados
+
+Na raiz do repositório:
+
+- Compilar solução: `dotnet build MouseScrollFixer.sln -c Release`
+- Testes: `dotnet test MouseScrollFixer.sln -c Release`
+- Pacote de publicação numa pasta fixa (ex.: `publish\app`):  
+  `dotnet publish src\MouseScrollFixer\MouseScrollFixer.csproj -c Release -o publish\app`
+
+## Não fazer
+
+- Não assumir que existem `src\...\bin\` ou `tests\...\bin\` — esses caminhos não são usados neste repo.
+- Não introduzir `OutputPath`/`BaseOutputPath` por projeto sem alinhar com a raiz `publish\` (evitar voltar a duplicar saídas).

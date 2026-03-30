@@ -14,3 +14,4 @@ Este repositório pode incluir **no futuro** um instalador (por exemplo **Inno S
 
 - `specs/001-mouse-scroll-fix/quickstart.md` — secção «Instalador opcional e primeira preferência».
 - Contrato JSON: `specs/001-mouse-scroll-fix/contracts/app-config.schema.json`.
+- Versão SemVer do executável: definida em `Version.props` na raiz do repositório (ver `docs/versioning.md`).

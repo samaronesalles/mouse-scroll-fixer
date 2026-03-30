@@ -95,7 +95,9 @@ internal sealed class TrayApplication : IDisposable
     private void UpdateTrayUi()
     {
         var enabled = _config.Activation.Enabled;
-        _notifyIcon.Text = enabled ? UiStrings.Get("Tray_StatusFixOn") : UiStrings.Get("Tray_StatusFixOff");
+        _notifyIcon.Text = enabled
+            ? UiStrings.Format("Tray_StatusFixOn", AppVersion.Informational)
+            : UiStrings.Format("Tray_StatusFixOff", AppVersion.Informational);
         _toggleFixItem.Text = enabled ? UiStrings.Get("Tray_MenuDeactivateFix") : UiStrings.Get("Tray_MenuActivateFix");
     }
 
