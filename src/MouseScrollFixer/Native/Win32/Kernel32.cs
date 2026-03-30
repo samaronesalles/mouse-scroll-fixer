@@ -12,7 +12,7 @@ internal static class Kernel32
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool CloseHandle(nint hObject);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool QueryFullProcessImageNameW(nint hProcess, int dwFlags, StringBuilder lpExeName, ref int lpdwSize);
 

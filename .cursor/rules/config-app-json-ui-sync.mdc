@@ -1,0 +1,25 @@
+---
+description: Novas opções de configuração devem existir no JSON (app-config) e na UI, com persistência ao editar
+alwaysApply: true
+---
+
+# Configuração: JSON (`app-config.json`) e tela de configurações
+
+O ficheiro persistido pelo utilizador é `app-config.json` (via `AppConfigStore` em `%LocalAppData%\MouseScrollFixer\`). Ao introduzir ou alterar **qualquer nova opção de configuração** no projeto:
+
+## Obrigatório
+
+1. **Modelo e persistência** — A propriedade deve fazer parte do modelo serializado (por exemplo `AppConfig`, perfis em `BehaviorProfile`, etc.), com leitura/escrita através do fluxo existente (`AppConfigJson`, `AppConfigStore`, validação em `AppConfigValidator` quando aplicável).
+
+2. **UI** — Deve existir controlo ou fluxo equivalente na janela de configurações (por exemplo `MainSettingsForm` e formulários relacionados), para o utilizador ver e alterar o valor sem editar JSON manualmente.
+
+3. **Sincronização** — Ao carregar a UI, os controlos devem refletir o estado vindo do JSON/config em memória; ao guardar ou ao alterar (conforme o padrão já usado na app), o ficheiro `app-config.json` deve ser atualizado pelo mesmo caminho que as restantes opções.
+
+## Não fazer
+
+- Adicionar apenas chaves ou propriedades que existam “só” no JSON serializado sem espelho na UI.
+- Expor opções só por documentação ou por edição manual do ficheiro, exceto se for explicitamente um modo avançado documentado como tal (não é o caso por defeito).
+
+## Resumo
+
+**Toda nova configuração = modelo + serialização + UI + persistência ao editar na UI.**

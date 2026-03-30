@@ -15,7 +15,11 @@ internal sealed class LowLevelMouseHook : IDisposable
         _proc = HookCallback;
     }
 
-    public event Action<int, nint, nint>? MouseMessage;
+    /// <summary>
+    /// Interceptor que recebe (nCode, wParam, lParam) e devolve <c>true</c>
+    /// se a mensagem foi tratada e deve ser consumida (não repassada ao sistema).
+    /// </summary>
+    public Func<int, nint, nint, bool>? MessageInterceptor { get; set; }
 
     /// <summary>
     /// Indica se o hook está instalado (não suspenso).
@@ -52,7 +56,9 @@ internal sealed class LowLevelMouseHook : IDisposable
         if (nCode < 0)
             return User32.CallNextHookEx(_hook, nCode, wParam, lParam);
 
-        MouseMessage?.Invoke(nCode, wParam, lParam);
+        if (MessageInterceptor?.Invoke(nCode, wParam, lParam) == true)
+            return (nint)1;
+
         return User32.CallNextHookEx(_hook, nCode, wParam, lParam);
     }
 

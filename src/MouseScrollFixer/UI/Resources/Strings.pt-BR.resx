@@ -71,13 +71,16 @@
     <value>Desativar fix</value>
   </data>
   <data name="Tray_StatusFixOn" xml:space="preserve">
-    <value>MouseScrollFixer — fix ligado</value>
+    <value>MouseScrollFixer — fix ligado ({0})</value>
   </data>
   <data name="Tray_StatusFixOff" xml:space="preserve">
-    <value>MouseScrollFixer — fix desligado</value>
+    <value>MouseScrollFixer — fix desligado ({0})</value>
   </data>
   <data name="MainSettings_Title" xml:space="preserve">
-    <value>Configurações — MouseScrollFixer</value>
+    <value>Configurações — MouseScrollFixer {0}</value>
+  </data>
+  <data name="MainSettings_AppVersion" xml:space="preserve">
+    <value>Versão da aplicação (SemVer): {0}</value>
   </data>
   <data name="MainSettings_TabSettings" xml:space="preserve">
     <value>Configurações</value>
@@ -92,7 +95,7 @@
     <value>Estado: fix desligado — o scroll não é alterado por este utilitário.</value>
   </data>
   <data name="MainSettings_Help" xml:space="preserve">
-    <value>Com o fix ligado e um aplicativo na lista, o scroll vertical do rato e do touchpad (quando aplicável) é normalizado para um passo mais previsível. Apenas os programas listados são afetados; os restantes mantêm o comportamento do Windows.</value>
+    <value>Com o fix ligado e um executável na lista, o scroll é enviado ao controlo sob o ponteiro (não só à janela em foco). Pode ajustar o comportamento abaixo e editar cada entrada (nome, caminho, tipo de correspondência, notas). Apenas os programas listados são afetados.</value>
   </data>
   <data name="MainSettings_Add" xml:space="preserve">
     <value>Adicionar executável…</value>
@@ -104,6 +107,72 @@
     <value>Nome</value>
   </data>
   <data name="MainSettings_ColumnPath" xml:space="preserve">
+    <value>Caminho do executável</value>
+  </data>
+  <data name="MainSettings_ColumnMatchKind" xml:space="preserve">
+    <value>Correspondência</value>
+  </data>
+  <data name="MainSettings_ColumnNotes" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="MainSettings_GroupBehavior" xml:space="preserve">
+    <value>Comportamento do scroll</value>
+  </data>
+  <data name="MainSettings_TouchpadSameAsWheel" xml:space="preserve">
+    <value>Normalizar touchpad para passos semelhantes à roda física</value>
+  </data>
+  <data name="MainSettings_InvertVertical" xml:space="preserve">
+    <value>Inverter scroll vertical</value>
+  </data>
+  <data name="MainSettings_LinesPerNotch" xml:space="preserve">
+    <value>Linhas por passo (aprox.)</value>
+  </data>
+  <data name="MainSettings_LinesPerNotchHint" xml:space="preserve">
+    <value>Use 0 para o padrão do sistema (1 linha por “clique”).</value>
+  </data>
+  <data name="MainSettings_UseVScrollFallback" xml:space="preserve">
+    <value>Modo legado: usar mensagens de barra de scroll (WM_VSCROLL) em vez da roda — útil para aplicativos muito antigos que ignoram WM_MOUSEWHEEL</value>
+  </data>
+  <data name="MainSettings_SchemaVersion" xml:space="preserve">
+    <value>Versão do ficheiro de configuração (schema): {0}</value>
+  </data>
+  <data name="MainSettings_ActivationLastModifiedUnknown" xml:space="preserve">
+    <value>Última alteração da opção «Ativar fix»: (ainda não registado)</value>
+  </data>
+  <data name="MainSettings_ActivationLastModified" xml:space="preserve">
+    <value>Última alteração da opção «Ativar fix»: {0}</value>
+  </data>
+  <data name="MainSettings_EditEntry" xml:space="preserve">
+    <value>Editar entrada…</value>
+  </data>
+  <data name="MainSettings_ErrorPathRequired" xml:space="preserve">
+    <value>O caminho do executável não pode estar vazio.</value>
+  </data>
+  <data name="MainSettings_ErrorPathInvalid" xml:space="preserve">
+    <value>O caminho do executável não é válido.</value>
+  </data>
+  <data name="InclusionEntryEdit_Title" xml:space="preserve">
+    <value>Editar entrada da lista de inclusão</value>
+  </data>
+  <data name="InclusionEntryEdit_DisplayName" xml:space="preserve">
+    <value>Nome de exibição</value>
+  </data>
+  <data name="InclusionEntryEdit_ExecutablePath" xml:space="preserve">
+    <value>Caminho do executável</value>
+  </data>
+  <data name="InclusionEntryEdit_MatchKind" xml:space="preserve">
+    <value>Tipo de correspondência</value>
+  </data>
+  <data name="InclusionEntryEdit_Notes" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="InclusionEntryEdit_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="InclusionEntryEdit_Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="MatchKind_ExecutablePath" xml:space="preserve">
     <value>Caminho do executável</value>
   </data>
   <data name="MainSettings_AddExeFilter" xml:space="preserve">
