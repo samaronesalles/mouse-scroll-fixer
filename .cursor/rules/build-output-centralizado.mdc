@@ -24,7 +24,7 @@ Na raiz do repositório:
 
 - Compilar solução: `dotnet build MouseScrollFixer.sln -c Release`
 - Testes: `dotnet test MouseScrollFixer.sln -c Release`
-- Pacote de publicação (single-file autocontido, um `.exe` principal):  
+- Pacote de publicação (single-file framework-dependent, um `.exe` principal):  
   `dotnet publish src\MouseScrollFixer\MouseScrollFixer.csproj -c Release -o publish\app`  
   Ver `docs/build.md`.
 

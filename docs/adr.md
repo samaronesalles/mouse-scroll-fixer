@@ -104,11 +104,12 @@
 
 ## ADR-010 — Distribuição
 
-**Decisão:** Publicação self-contained
+**Decisão:** Publicação framework-dependent single-file
 
 **Motivo:**
 
-* Não depender de runtime instalado
+* Reduzir drasticamente o tamanho do executável distribuído
+* Aceitar como pré-requisito o .NET 8 Desktop Runtime instalado na máquina de destino
 
 ---
 

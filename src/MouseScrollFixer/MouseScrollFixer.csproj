@@ -13,12 +13,10 @@
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
     <!-- WFAC010: DPI via API/propriedade em vez de app.manifest -->
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
-    <!-- Distribuição: um único .exe autocontido (runtime embutido); ver docs/build.md -->
+    <!-- Distribuição: um único .exe framework-dependent; requer .NET 8 Desktop Runtime -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <SelfContained>true</SelfContained>
+    <SelfContained>false</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <!-- Reduz satélites do runtime a pt-BR (UI da app); ver docs/build.md -->
     <SatelliteResourceLanguages>pt-BR</SatelliteResourceLanguages>
   </PropertyGroup>

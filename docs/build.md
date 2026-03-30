@@ -3,6 +3,7 @@
 ## Pré-requisitos
 
 - [.NET SDK 8](https://dotnet.microsoft.com/download) (para compilar no repositório)
+- [Windows Desktop Runtime 8 (x64)](https://dotnet.microsoft.com/download/dotnet/8.0) na máquina de destino (para executar o `.exe` publicado)
 
 ## Versão (SemVer)
 
@@ -19,9 +20,9 @@ dotnet test MouseScrollFixer.sln -c Release
 
 Saídas em `publish\` (sem `bin\`/`obj\` dentro de `src\` ou `tests\`); detalhes em `.cursor/rules/build-output-centralizado.mdc`.
 
-## Publicação padrão (single-file, autocontido)
+## Publicação padrão (single-file, framework-dependent)
 
-O projeto `MouseScrollFixer` define **publicação em ficheiro único** (`PublishSingleFile`), **runtime incluído** (`SelfContained`) e **RID** `win-x64`. Não é necessário passar `-r` nem `--self-contained` na linha de comandos.
+O projeto `MouseScrollFixer` define **publicação em ficheiro único** (`PublishSingleFile`), **dependente de runtime instalado** (`SelfContained=false`) e **RID** `win-x64`.
 
 Na raiz:
 
@@ -29,7 +30,9 @@ Na raiz:
 dotnet publish src\MouseScrollFixer\MouseScrollFixer.csproj -c Release -o publish\app
 ```
 
-O artefacto principal é **`publish\app\MouseScrollFixer.exe`** (~140–160 MB, conforme versão do SDK). Pode **copiar só este `.exe`** para outra pasta ou máquina (Windows x64) e executar: o runtime e as bibliotecas nativas necessárias são extraídos em tempo de execução (por exemplo para uma pasta temporária), sem depender de uma instalação global do .NET.
+O artefato principal é **`publish\app\MouseScrollFixer.exe`** (tipicamente **< 1 MB**). Pode distribuir apenas esse `.exe`, desde que a máquina de destino tenha o **.NET 8 Desktop Runtime (x64)** instalado.
+
+Se o runtime não estiver instalado, o Windows mostrará a mensagem padrão de ausência de runtime .NET ao abrir o executável.
 
 ### Ficheiros extra na pasta de publicação
 
@@ -41,10 +44,8 @@ O artefacto principal é **`publish\app\MouseScrollFixer.exe`** (~140–160 MB, 
 | Propriedade | Função |
 |-------------|--------|
 | `PublishSingleFile` | Gera um único executável principal. |
-| `SelfContained` | Inclui o runtime .NET no pacote (não exige runtime instalado no sistema). |
+| `SelfContained` | Define `false`: exige runtime .NET já instalado no sistema. |
 | `RuntimeIdentifier` (`win-x64`) | Alvo x64 no Windows. |
-| `IncludeNativeLibrariesForSelfExtract` | Embute DLLs nativas no `.exe` e extrai-as ao correr. |
-| `IncludeAllContentForSelfExtract` | Inclui conteúdo adicional (por exemplo satélites) no bundle. |
 | `SatelliteResourceLanguages` (`pt-BR`) | Limita satélites de idioma do runtime ao português do Brasil, alinhado à UI da app. |
 
 ## Saída do `dotnet build` (testes manuais)
@@ -59,7 +60,7 @@ Os testes unitários compilam para `publish\out\MouseScrollFixer.Tests\Release\n
 
 ## Distribuição
 
-- **Portátil**: enviar o `MouseScrollFixer.exe` (ou um ZIP só com esse ficheiro).
+- **Portátil**: enviar o `MouseScrollFixer.exe` (ou um ZIP só com esse ficheiro) + instrução de pré-requisito do `.NET 8 Desktop Runtime`.
 - **Instalador**: opcional; ver [installer/README.md](../installer/README.md).
 
 ## Observações
