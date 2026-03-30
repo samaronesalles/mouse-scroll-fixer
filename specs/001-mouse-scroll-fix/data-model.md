@@ -70,3 +70,9 @@ Agrupa parâmetros de **como** o scroll vertical é normalizado (entidade “se 
 
 - `AppConfig` **contém** 0..N `InclusionEntry` e **uma** `ActivationPreference`.
 - `BehaviorProfile` **opcional** em `AppConfig`; se ausente, usar valores por defeito.
+
+---
+
+## Estado em tempo de execução (fora do JSON)
+
+**Instância única e UI (RF-011, RF-012)**: o mutex/IPC e o separador ativo na janela principal após um segundo arranque **não** fazem parte do documento persistido; são **apenas** estado de processo e devem cumprir a especificação sem exigir novos campos em `AppConfig`.

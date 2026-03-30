@@ -48,6 +48,8 @@ Documentação auxiliar: `installer/README.md` na raiz do repositório.
 | 4 | Alternar ligado/desligado | Comportamento P1 / sistema conforme P2. |
 | 5 | Reinício do Windows com último estado “ligado” | CS-005 — fix ativo sem reativar manualmente. |
 | 6 | Simular ficheiro de configuração corrompido | Estado seguro + mensagem; sem travar a sessão. |
+| 7 | Com instância já em execução (com ou sem janela visível), iniciar o `.exe` novamente | **Não** surge segunda instância; janela existente **ativa**, **primeiro plano**, **visível**, **aba de configurações** (RF-011, CS-006). |
+| 8 | Arranque com programa só na bandeja (sem janela principal visível) | **Aviso observável** (balão/notificação ou equivalente) em **pt-BR**: programa iniciado e disponível na bandeja (RF-012, CS-006). |
 
 ## Ambiente de referência para CS-001
 

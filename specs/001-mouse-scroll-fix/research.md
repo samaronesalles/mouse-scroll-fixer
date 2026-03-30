@@ -91,3 +91,23 @@ Este documento resolve pontos deixados como “NEEDS CLARIFICATION” no context
 **Racional**: Clarificação da especificação.
 
 **Alternativas consideradas**: **Suportar Win10** — explicitamente fora do MVP.
+
+---
+
+## 10. Instância única e segundo arranque (RF-011)
+
+**Decisão**: Garantir **no máximo um processo** de aplicação por utilizador na sessão através de **mutex nomeado** (por exemplo `Local\` + identificador do produto) ou mecanismo equivalente documentado; ao detetar instância existente, o segundo processo **não** assume o papel principal: **sinaliza** a instância existente (por exemplo **mensagem registada** `WM_COPYDATA`, **pipe** nomeado ou **ficheiro mapeado** com comando “ativar UI”) para **restaurar** `MainForm`, **ShowInTaskbar** / visibilidade, **BringToFront**, e navegar para a **aba de configurações**.
+
+**Racional**: Cumpre RF-011 sem exigir dados novos no JSON; comportamento puramente de tempo de execução.
+
+**Alternativas consideradas**: **Ficheiro de lock em disco** — mais frágil e lento; **ignorar segundo arranque** — viola a especificação.
+
+---
+
+## 11. Aviso observável em todo arranque (RF-012)
+
+**Decisão**: Em arranques em que a janela principal **não** esteja visível de imediato (ex.: apenas bandeja), mostrar **balão** do `NotifyIcon` e/ou **notificação** do Windows 11 (`UserNotification`/toast) com texto fixo em **pt-BR** informando que o programa **iniciou** e está na **bandeja**. Quando a janela principal já estiver **visível** desde o arranque, o requisito pode ser satisfeito pela **própria janela** (título ou mensagem inicial) **sem** balão redundante — combinação por fluxo documentada no roteiro de testes.
+
+**Racional**: Elimina arranque “silencioso”; alinha com clarificação 2026-03-30 na especificação.
+
+**Alternativas consideradas**: **Só ícone na bandeja** — insuficiente para RF-012 nos fluxos sem janela visível.

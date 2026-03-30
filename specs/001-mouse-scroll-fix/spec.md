@@ -20,6 +20,10 @@
 - Q: Qual o idioma da interface e textos do produto no MVP? → A: **Apenas português (Brasil) — pt-BR** na interface, mensagens, ajuda embutida e textos do instalador ligados à experiência do produto; **outros idiomas fora de escopo** nesta versão.
 - Q: Telemetria ou análise de uso no MVP? → A: **Sem telemetria nem análise de uso** no MVP; **nenhum** envio de dados de utilização do produto para fora da máquina por este fim; eventual **verificação de atualizações** (se existir) **não** substitui nem contorna este requisito com recolha de uso — detalhe no plano.
 
+### Session 2026-03-30
+
+- Q: Comportamento ao tentar abrir uma segunda instância e aviso ao iniciar na bandeja? → A: **Instância única** — se já houver uma instância (mesmo só na bandeja), nova execução **ativa** a existente: **restaura** a janela em primeiro plano, **visível** na área de trabalho, e abre a **aba de configurações**. Em **todo** arranque (incluindo início “silencioso” na bandeja), deve haver **sempre** um **aviso observável** (por exemplo **balão** ou equivalente) de que o programa foi iniciado e está na bandeja, em **pt-BR**.
+
 ## Cenários de usuário e testes *(obrigatório)*
 
 ### História de usuário 1 — Scroll previsível no uso diário (Prioridade: P1)
@@ -41,7 +45,7 @@ Como utilizador do **Windows 11** que sofre com scroll acelerado demais, inverti
 
 ### História de usuário 2 — Controle de ativação (Prioridade: P2)
 
-Como usuário, quero **ligar ou desligar** o comportamento do fix (ou escolher um modo seguro) sem reinstalar o sistema, para poder comparar “antes/depois” e evitar interferência quando não for desejada.
+Como usuário, quero **ligar ou desligar** o comportamento do fix sem reinstalar o sistema, para poder comparar “antes/depois” e evitar interferência quando não for desejada. No MVP **não** há modo de operação separado denominado “modo seguro” além de **desativar** o fix (volta ao comportamento do sistema sem o utilitário nos cenários cobertos); eventual rotulagem na interface deve alinhar-se a RF-002.
 
 **Por que esta prioridade**: Aumenta confiança e adesão; é essencial para suporte e diagnóstico, mas o produto ainda entrega valor com P1 sozinha em ambiente controlado.
 
@@ -70,6 +74,22 @@ Como usuário, quero poder **encerrar o utilitário** (incluindo reinício da se
 
 ---
 
+### História de usuário 4 — Instância única e aviso de arranque (Prioridade: P2)
+
+Como utilizador, quero que **não existam duas instâncias** do utilitário ao mesmo tempo e que, se eu tentar abrir de novo, a **janela já em execução** (mesmo estando **só na bandeja do sistema**) volte **visível** e mostre **configurações**, e quero ser **avisado em todo arranque** de que o programa iniciou e está na bandeja, para não achar que “nada aconteceu”.
+
+**Por que esta prioridade**: Evita confusão, duplicidade de processos e perda de controlo quando o programa inicia apenas no ícone da área de notificação.
+
+**Teste independente**: Pode ser validado com duplo clique no atalho enquanto o programa já corre (com e sem janela minimizada à bandeja) e observando o aviso em arranques com início na bandeja, sem depender de P1 além do mínimo para ter uma aba de configurações identificável.
+
+**Cenários de aceite**:
+
+1. **Dado** que **já existe** uma instância do utilitário em execução, **quando** o utilizador inicia o aplicativo **novamente** (atalho, executável ou outro mecanismo de arranque suportado), **então** **não** é criada uma segunda instância e a instância existente é **ativada**.
+2. **Dado** que a instância existente está apenas na **bandeja do sistema** (sem janela principal visível), **quando** ocorre a segunda tentativa de arranque conforme o cenário anterior, **então** a janela principal é **restaurada**, passa a **primeiro plano** e fica **visível na área de trabalho**, e a interface apresenta a **aba de configurações** (ou equivalente nomeado no plano).
+3. **Dado** um arranque do aplicativo em que **não** haja janela principal visível de imediato (por exemplo apenas na bandeja), **quando** o arranque completa, **então** o utilizador recebe um **aviso observável** (por exemplo balão ou notificação) de que o programa foi **iniciado** e está **disponível na bandeja do sistema**, em conformidade com RF-012 e RF-009.
+
+---
+
 ### Casos extremos
 
 - **Aplicativos ou cenários fora da lista de inclusão atual** (não configurados pelo utilizador): não há requisito de correção do scroll; o comportamento pode ser o do sistema sem o fix.
@@ -83,6 +103,7 @@ Como usuário, quero poder **encerrar o utilitário** (incluindo reinício da se
 - **Distribuição sem instalador** (por exemplo, pacote portátil) ou **sem** opção de ativação na instalação: o estado inicial antes da primeira preferência gravada segue **regra documentada no plano** (e na ajuda, se aplicável).
 - **Sistema operacional não suportado** (por exemplo **Windows 10** ou anterior): o produto **não** integra o MVP; o utilizador DEVE ser informado de que o escopo suportado é **Windows 11** (mensagem na instalação, ao executar ou na documentação — detalhe no plano), sem prometer correção do scroll nesses ambientes.
 - **Idioma de exibição do Windows** diferente de pt-BR: o MVP **não** exige localização da UI ao idioma do sistema; a experiência do produto permanece em **português (Brasil)** conforme RF-009.
+- **Segunda execução durante o arranque da primeira**: o comportamento de **instância única** (RF-011) deve ser satisfeito; o plano pode definir o intervalo de tolerância se houver janela de corrida técnica.
 
 ## Requisitos *(obrigatório)*
 
@@ -98,6 +119,8 @@ Como usuário, quero poder **encerrar o utilitário** (incluindo reinício da se
 - **RF-008**: No MVP, o produto DEVE **suportar apenas Windows 11** como sistema operacional alvo. **Windows 10** e versões anteriores estão **fora de escopo** nesta versão; o utilizador DEVE poder identificar esse requisito (instalador, arranque da aplicação ou documentação embutida — detalhe no plano). Edições do Windows 11 (por exemplo Home vs Pro), arquitetura (por exemplo **64 bits**) e build mínimo são fixados no **plano**.
 - **RF-009**: No MVP, a **interface de utilizador**, **mensagens** (incluindo notificações de conflito e erros tratáveis), **ajuda ou documentação embutida** e **textos do instalador** relacionados à experiência do produto DEVEM estar em **português (Brasil)**. **Outros idiomas** não fazem parte do escopo desta versão; localização adicional é **versão futura** salvo decisão explícita em documento de produto.
 - **RF-010**: No MVP, o produto **NÃO DEVE** recolher nem transmitir **telemetria**, **análise de uso** ou dados equivalentes sobre o comportamento do utilizador para **destinos externos** (rede, nuvem ou serviços de terceiros) por este fim. **Configurações e preferências** tratadas nesta especificação permanecem **locais** à máquina, salvo ação explícita do utilizador (por exemplo exportar ou copiar). Uma **verificação opcional de atualizações** do produto, se existir, **NÃO** pode servir de veículo para telemetria ou análise de uso; o comportamento exato fica no **plano**, em conformidade com este requisito.
+- **RF-011**: O produto DEVE garantir **no máximo uma instância** do aplicativo em execução **por utilizador na sessão** (instância única). Quando o utilizador iniciar o programa e **já existir** uma instância em execução, o arranque **não** DEVE criar um segundo processo de aplicação; a instância existente DEVE ser **ativada**: a janela principal DEVE ser **restaurada** se estiver apenas na **bandeja do sistema** (área de notificação), DEVE passar a **primeiro plano** e DEVE ficar **visível na área de trabalho**, e a interface DEVE apresentar a **aba de configurações** (ou o painel equivalente definido no plano). O mecanismo de exclusão mútua ou sinalização entre processos fica no **plano**, sem alterar o resultado observável para o utilizador.
+- **RF-012**: Em **cada** arranque do aplicativo, o utilizador DEVE receber um **aviso ou indicação observável** de que o programa foi **iniciado** e que permanece **acessível na bandeja do sistema** (ícone na área de notificação). Quando o arranque **não** apresentar de imediato a janela principal visível (por exemplo início apenas na bandeja), esse feedback **não** pode ser omitido: formas típicas incluem **balão** junto ao ícone, **notificação** do Windows ou equivalente **compatível com Windows 11**, em **português (Brasil)** conforme RF-009. Quando a janela principal já estiver **visível** desde o arranque, o mesmo requisito de clareza pode ser satisfeito pela **própria janela** (por exemplo título ou mensagem inicial), sem obrigatoriedade de balão redundante — o **plano** define a combinação para cada fluxo de arranque. O objetivo é eliminar a perceção de arranque “silencioso” sem qualquer feedback.
 
 ### Entidades principais *(dados / configuração)*
 
@@ -112,8 +135,9 @@ Como usuário, quero poder **encerrar o utilitário** (incluindo reinício da se
 - **CS-001**: Em testes com roteiro acordado, **100%** dos cenários de aceite prioritários (P1) passam em duas execuções consecutivas em **ambiente de referência Windows 11** descrito no plano.
 - **CS-002**: Usuários de validação (ou o próprio autor, em time reduzido) conseguem alternar fix ativo/inativo e observar diferença **em menos de 1 minuto** após leitura de instruções curtas (quickstart) **em português (Brasil)**.
 - **CS-003**: Após encerramento normal do utilitário, **nenhum** sintoma crítico documentado na lista de verificação de regressão (por exemplo: scroll irreversível ou perda de controle do ponteiro) nos cenários cobertos pelo roteiro.
-- **CS-005**: Após **reinício do Windows** com preferência persistida em **ligado**, o usuário obtém o comportamento de P1 na lista de inclusão **sem** precisar ativar o fix manualmente de novo (salvo falha documentada).
 - **CS-004**: Redação desta especificação permanece **agnóstica a framework e linguagem** em critérios de sucesso; métricas acima são verificáveis por observação ou checklist, não por medição de código.
+- **CS-005**: Após **reinício do Windows** com preferência persistida em **ligado**, o usuário obtém o comportamento de P1 na lista de inclusão **sem** precisar ativar o fix manualmente de novo (salvo falha documentada).
+- **CS-006**: Em roteiro de validação em **Windows 11**, em **100%** das execuções de arranque cobertas pelo teste (incluindo arranque com início apenas na bandeja), o utilizador identifica **sem ambiguidade** o **aviso** de que o programa está em execução na bandeja do sistema, conforme RF-012; em **100%** das tentativas de **segunda execução** com instância já ativa, **não** surge uma segunda instância e a janela existente cumpre RF-011 (incluindo abertura da aba de configurações).
 
 ## Premissas
 
@@ -127,3 +151,4 @@ Como usuário, quero poder **encerrar o utilitário** (incluindo reinício da se
 - Quando o fluxo de entrega incluir **instalador** com opção de ativação, essa escolha estabelece a **preferência inicial** alinhada a RF-002; outros fluxos de entrega seguem o plano.
 - A experiência textual do MVP é **monolíngue em português (Brasil)**; não há requisito de adaptar rótulos ao idioma de exibição do Windows nesta versão (ver RF-009).
 - **Privacidade e rede**: no MVP não há **telemetria** nem **análise de uso** transmitida para fora da máquina (ver RF-010); o plano detalha o que é permitido sem violar esse requisito (por exemplo atualizações opcionais).
+- **Instância única e aviso de arranque** são obrigatórios no MVP (RF-011, RF-012); detalhes de implementação e texto exato do aviso ficam no plano, com textos em **pt-BR**.

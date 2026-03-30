@@ -2,112 +2,132 @@
 description: "Lista de tarefas para implementação da feature 001-mouse-scroll-fix"
 ---
 
-# Tarefas: correção do comportamento do scroll do mouse
+# Tarefas: correção do comportamento do scroll do mouse (MVP)
 
-**Entrada**: Artefatos de desenho em `specs/001-mouse-scroll-fix/`  
-**Pré-requisitos**: `plan.md`, `spec.md`; opcionais: `research.md`, `data-model.md`, `contracts/`, `quickstart.md`
+**Entrada**: Documentos de desenho em `specs/001-mouse-scroll-fix/`  
+**Pré-requisitos**: `plan.md`, `spec.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md`
 
-**Testes**: A especificação não exige TDD nem suíte automatizada obrigatória; incluem-se apenas tarefas de testes unitários pontuais para **lógica pura** (validação de configuração), alinhadas ao `plan.md`. Validação principal permanece **manual** conforme `quickstart.md`.
+**Testes automatizados**: Opcionais nesta lista — a especificação prioriza roteiros manuais e lógica testável em projeto de testes; incluir projetos de teste apenas onde o plano citar validação de configuração.
 
-**Organização**: Tarefas agrupadas por história de usuário para permitir implementação e verificação independentes.
+**Organização**: Tarefas agrupadas por história de utilizador para permitir implementação e verificação independentes.
 
 ## Formato: `[ID] [P?] [História] Descrição`
 
-- **[P]**: Pode executar em paralelo (ficheiros diferentes, sem dependência de tarefas incompletas na mesma fase)
-- **[US1]**, **[US2]**, **[US3]**: Rastreio às histórias em `spec.md`
-- Incluir **caminhos de ficheiro** concretos nas descrições
+- **[P]**: Pode executar em paralelo (ficheiros distintos, sem dependências em tarefas incompletas)
+- **[USn]**: História de utilizador em `spec.md` (US1…US4)
+- Incluir caminhos de ficheiros exatos nas descrições
 
 ## Convenções de caminhos
 
-- Raiz do repositório: solução em `src/MouseScrollFixer/`, testes em `tests/MouseScrollFixer.Tests/`, conforme `plan.md`
+- Código: `src/MouseScrollFixer/`
+- Testes: `tests/MouseScrollFixer.Tests/`
+- Contratos: `specs/001-mouse-scroll-fix/contracts/`
 
 ---
 
 ## Fase 1: Configuração (infraestrutura partilhada)
 
-**Objetivo**: Inicialização do projeto e estrutura base
+**Objetivo**: Solução .NET, projeto `net8.0-windows` e estrutura de pastas alinhada a `plan.md`.
 
-- [x] T001 Criar solução .NET na raiz do repositório e projeto `src/MouseScrollFixer/MouseScrollFixer.csproj` (`net8.0-windows`, WinForms, C# 12) conforme `plan.md`
-- [x] T002 [P] Criar árvore de pastas `App/`, `Core/Configuration/`, `Core/ScrollNormalization/`, `Hooks/`, `Native/Win32/`, `UI/Resources/` em `src/MouseScrollFixer/` conforme `plan.md`
-- [x] T003 [P] Criar projeto de testes `tests/MouseScrollFixer.Tests/MouseScrollFixer.Tests.csproj` (xUnit ou MSTest) com referência ao projeto principal
-
----
-
-## Fase 2: Fundações (pré-requisitos bloqueantes)
-
-**Objetivo**: Infraestrutura que **deve** estar pronta antes das histórias de usuário (modelos, persistência, SO, stubs da bandeja)
-
-**⚠️ CRÍTICO**: Nenhuma história de usuário deve avançar antes desta fase estar concluída
-
-- [x] T004 Implementar declarações P/Invoke necessárias (ex.: `SetWindowsHookEx`, `CallNextHookEx`, `UnhookWindowsHookEx`, `WindowFromPoint`, `GetAncestor`, APIs de processo/janela) em `src/MouseScrollFixer/Native/Win32/` conforme `research.md`
-- [x] T005 Implementar resolução de alvo (HWND → caminho do executável) em `src/MouseScrollFixer/Core/ScrollNormalization/WindowTargetResolver.cs` alinhado a ADR-004/006 e `data-model.md`
-- [x] T006 [P] Definir modelos `AppConfig`, `ActivationPreference`, `InclusionEntry`, `BehaviorProfile` em `src/MouseScrollFixer/Core/Configuration/` conforme `data-model.md` e `contracts/app-config.schema.json`
-- [x] T007 Implementar `AppConfigStore` (caminho sob `%LocalAppData%`, leitura/escrita JSON, estado seguro em ficheiro corrompido, política mínima de recuperação) em `src/MouseScrollFixer/Core/Configuration/AppConfigStore.cs`
-- [x] T008 Implementar validação de regras (teto 64 entradas, duplicados de `executablePath`, campos obrigatórios) em `src/MouseScrollFixer/Core/Configuration/AppConfigValidator.cs`, consistente com `contracts/app-config.schema.json`
-- [x] T009 Verificar **apenas Windows 11** no arranque com mensagem em **pt-BR** e encerramento controlado em `src/MouseScrollFixer/Program.cs` (RF-008)
-- [x] T010 Inicializar `TrayApplication` com `NotifyIcon` e menu de contexto mínimo (abrir configurações / sair) em `src/MouseScrollFixer/App/TrayApplication.cs`
-
-**Checkpoint**: Fundações prontas — pode iniciar implementação das histórias
+- [ ] T001 Criar ou alinhar `MouseScrollFixer.sln` na raiz do repositório com projetos `src/MouseScrollFixer` e `tests/MouseScrollFixer.Tests`
+- [ ] T002 Configurar `src/MouseScrollFixer/MouseScrollFixer.csproj` (WinExe, `net8.0-windows`, C# 12, WinForms, `ApplicationManifest`, `InternalsVisibleTo` para o projeto de testes)
+- [ ] T003 [P] Configurar `tests/MouseScrollFixer.Tests/MouseScrollFixer.Tests.csproj` com referência ao projeto principal e SDK de testes (xUnit ou MSTest conforme `plan.md`)
 
 ---
 
-## Fase 3: História de usuário 1 — Scroll previsível e lista de inclusão (Prioridade: P1) 🎯 MVP
+## Fase 2: Fundamentos (pré-requisitos bloqueantes)
 
-**Objetivo**: Lista de inclusão editável, scroll vertical normalizado (roda e touchpad quando o mecanismo permitir) **apenas** para entradas na lista, com fix **ligável** na interface para viabilizar os cenários de aceite e o `quickstart.md`
+**Objetivo**: Configuração persistida, validação, verificação de SO, base Win32 e arranque da aplicação — **obrigatório** antes das histórias de utilizador.
 
-**Teste independente**: Seguir tabela do `quickstart.md` (linhas de verificação rápida) com app de exemplo definido no plano; não depende de US2/US3 além do já entregue nas fundações
+**⚠️ Crítico**: Nenhum trabalho de história de utilizador deve começar antes desta fase estar completa.
 
-### Implementação — US1
+- [ ] T004 [P] Implementar modelos `AppConfig`, `ActivationPreference`, `InclusionEntry`, `BehaviorProfile` e enums alinhados a `data-model.md` em `src/MouseScrollFixer/Core/Configuration/`
+- [ ] T005 Implementar serialização JSON (`schemaVersion`, opções `System.Text.Json`) e ficheiro sob perfil do utilizador (`%LocalAppData%\MouseScrollFixer\`) em `src/MouseScrollFixer/Core/Configuration/AppConfigStore.cs` e `AppConfigJson.cs`
+- [ ] T006 Implementar `AppConfigValidator` com teto de 64 entradas, duplicados de caminho e regras de `MatchKind` em `src/MouseScrollFixer/Core/Configuration/AppConfigValidator.cs`
+- [ ] T007 Tratar ficheiro corrompido ou inválido com estado seguro (fix desligado, lista vazia ou política documentada) e mensagem em pt-BR em `src/MouseScrollFixer/Core/Configuration/AppConfigLoadResult.cs` e fluxo em `Program.cs`
+- [ ] T008 [P] Declarar P/Invoke e constantes Win32 necessários (user32, kernel32, estruturas de hook) em `src/MouseScrollFixer/Native/Win32/`
+- [ ] T009 Implementar verificação **Windows 11** (build mínimo conforme `research.md` / RF-008) em `src/MouseScrollFixer/Native/Win32/OsVersionHelper.cs` e recusa amigável em `src/MouseScrollFixer/Program.cs`
+- [ ] T010 Implementar `ScrollFixerSession` (instalação/remoção do hook conforme `activation.enabled`) em `src/MouseScrollFixer/App/ScrollFixerSession.cs`
+- [ ] T011 Implementar `TrayApplication` / `TrayApplicationContext` com `NotifyIcon`, menu de contexto em pt-BR e fluxo para abrir definições em `src/MouseScrollFixer/App/TrayApplication.cs`
+- [ ] T012 Criar `MainSettingsForm` com separador de **configurações** identificável (TabControl ou equivalente) e textos em `src/MouseScrollFixer/UI/MainSettingsForm.cs` e `UI/Resources/Strings.pt-BR.resx`
+- [ ] T013 Centralizar cadeias de UI em pt-BR em `src/MouseScrollFixer/UI/Resources/UiStrings.cs` e ficheiros `.resx`
 
-- [x] T011 [US1] Implementar `LowLevelMouseHook` (`WH_MOUSE_LL`) em `src/MouseScrollFixer/Hooks/LowLevelMouseHook.cs` sem bloquear o callback (trabalho pesado fora do hook), conforme `research.md`
-- [x] T012 [US1] Implementar normalização de scroll vertical (`WM_MOUSEWHEEL`, constantes documentadas, ignorar horizontal) em `src/MouseScrollFixer/Core/ScrollNormalization/ScrollNormalizer.cs`
-- [x] T013 [US1] Implementar coordenação (aplicar normalização só se `activation.enabled` e executável da janela em foco na lista; caso contrário repassar evento) em `src/MouseScrollFixer/App/ScrollFixerSession.cs` (ou nome equivalente no `App/`)
-- [x] T014 [US1] Implementar `MainSettingsForm` com lista de inclusão (adicionar/remover `.exe`, mensagens pt-BR para limites e erros) e controlo de **ativação ligado/desligado** em `src/MouseScrollFixer/UI/MainSettingsForm.cs` (RF-001, RF-005; suporte ao CS-002)
-- [x] T015 [P] [US1] Adicionar recurso de strings **pt-BR** em `src/MouseScrollFixer/UI/Resources/Strings.pt-BR.resx` (RF-009)
-- [x] T016 [US1] Incluir texto curto de ajuda embutida explicando o efeito do fix quando ligado (RF-003) em `src/MouseScrollFixer/UI/MainSettingsForm.cs`
-
-**Checkpoint**: US1 funcional e testável isoladamente (cenários P1 da `spec.md`)
-
----
-
-## Fase 4: História de usuário 2 — Controlo de ativação (Prioridade: P2)
-
-**Objetivo**: Alternar fix ligado/desligado sem reinstalar o SO; persistência imediata; alinhar instalador opcional à primeira preferência (RF-002)
-
-**Teste independente**: Alternar estado no mesmo app de teste e comparar antes/depois; verificar persistência após reabrir o utilitário
-
-### Implementação — US2
-
-- [x] T017 [US2] Ligar menu da bandeja e ícone ao estado de ativação (abrir definições, alternar fix, sair) em `src/MouseScrollFixer/App/TrayApplication.cs`, mantendo UI sincronizada com `activation.enabled`
-- [x] T018 [US2] Garantir que, com fix **desligado**, não há efeito do normalizador (desinstalar hook ou repasse transparente documentado) e estado claro na UI (RF-005) em `src/MouseScrollFixer/App/ScrollFixerSession.cs` e formulário
-- [x] T019 [US2] Adicionar projeto de **instalador opcional** (Inno Setup, WiX ou equivalente) em `installer/` com textos em **pt-BR** e opção “Ativar o fix ao concluir” que grava a **primeira** preferência conforme RF-002, **ou** documentar fluxo equivalente no `specs/001-mouse-scroll-fix/quickstart.md` se o instalador ficar fora do MVP deste incremento
-
-**Checkpoint**: US1 e US2 verificáveis em conjunto (P1 + P2)
+**Checkpoint**: Configuração lida/gravada, SO validado, bandeja e formulário base funcionais — **seguir pela Fase 3 (US4)** para cumprir RF-011 e RF-012 antes do trabalho de scroll (US1), evitando builds intermédios sem instância única.
 
 ---
 
-## Fase 5: História de usuário 3 — Encerramento e recuperação (Prioridade: P3)
+## Fase 3: História de utilizador 4 — Instância única e aviso de arranque (Prioridade: P2)
 
-**Objetivo**: Sair sem deixar o sistema inconsistente; preferência persistida após reinício de sessão (alinhado a RF-002 e cenários P3)
+**Objetivo**: Mutex/IPC para uma instância por sessão; segundo arranque ativa a janela existente, primeiro plano, visível, com separador de configurações; aviso observável em todo arranque quando só bandeja (RF-011, RF-012).
 
-**Teste independente**: Encerramento pelo fluxo oficial, reinício do Windows, confirmar comportamento com roteiro em `quickstart.md`
+**Ordem**: Colocada **antes** de US1/US2 para que qualquer binário após o fundamento respeite instância única e feedback de arranque exigidos pelo MVP.
 
-### Implementação — US3
+**Teste independente**: Roteiros 7 e 8 em `quickstart.md` e CS-006.
 
-- [x] T020 [US3] Implementar encerramento limpo: `UnhookWindowsHookEx`, gravar configuração, libertar `NotifyIcon` em `src/MouseScrollFixer/App/TrayApplication.cs` e `Program.cs` (handlers de saída)
-- [x] T021 [US3] Garantir que o arranque aplica `activation.enabled` persistido sem exigir reativação manual quando o último estado foi “ligado” (CS-005) em `src/MouseScrollFixer/App/TrayApplication.cs` / `ScrollFixerSession.cs`
+- [ ] T025 [US4] Implementar exclusão mútua (mutex nomeado `Local\` + identificador do produto) em `src/MouseScrollFixer/SingleInstance/SingleInstanceCoordinator.cs` (criar pasta se necessário)
+- [ ] T026 [US4] Implementar sinalização do segundo processo à instância existente (mensagem registada, pipe ou memória mapeada) para restaurar `MainSettingsForm`, `BringToFront` e selecionar o separador de configurações
+- [ ] T027 [US4] Integrar fluxo em `Program.cs`: se segunda instância, não iniciar segunda UI principal — apenas sinalizar e sair
+- [ ] T028 [US4] Garantir aviso observável (balão `NotifyIcon` e/ou notificação Windows 11) em **cada** arranque quando a janela principal não estiver visível, texto fixo em pt-BR; quando a janela já visível, satisfazer RF-012 sem balão redundante conforme `research.md` — em `TrayApplication.cs` e recursos
 
-**Checkpoint**: Fluxo de saída e reinício conforme P3
+**Checkpoint**: RF-011 e RF-012 demonstráveis.
 
 ---
 
-## Fase 6: Polimento e transversal
+## Fase 4: História de utilizador 1 — Scroll previsível (Prioridade: P1) — MVP
 
-**Objetivo**: Requisitos transversais e endurecimento
+**Objetivo**: Lista de inclusão editável, hook de baixo nível, resolução de janela/processo e normalização do scroll vertical apenas para entradas listadas (RF-001).
 
-- [x] T022 [P] Implementar heurística de **deteção de conflito** e notificação ao utilizador em **pt-BR** (balloon ou diálogo), sem precedência automática (RF-007) em `src/MouseScrollFixer/Core/ConflictDetection/` (ou pasta equivalente)
-- [x] T023 [P] Adicionar testes unitários para `AppConfigValidator` (e regras puras associadas) em `tests/MouseScrollFixer.Tests/Configuration/`
-- [x] T024 [P] Revisão final: mensagens para configuração corrompida (estado seguro), ausência de telemetria (RF-010), e validação manual guiada por `specs/001-mouse-scroll-fix/quickstart.md` (checklist de regressão)
+**Teste independente**: Com o fix ativo e um app de teste na lista, verificar roda e (se disponível) touchpad conforme roteiro em `quickstart.md`.
+
+- [ ] T014 [P] [US1] Implementar `LowLevelMouseHook` com `WH_MOUSE_LL` e caminho sem bloquear o callback em `src/MouseScrollFixer/Hooks/LowLevelMouseHook.cs`
+- [ ] T015 [P] [US1] Implementar resolução de HWND / executável (`WindowFromPoint`, `GetAncestor`, caminho do processo) em `src/MouseScrollFixer/Core/ScrollNormalization/WindowTargetResolver.cs`
+- [ ] T016 [US1] Implementar `ScrollNormalizer` (direção, delta/`WHEEL_DELTA`, ignorar horizontal no MVP) em `src/MouseScrollFixer/Core/ScrollNormalization/ScrollNormalizer.cs`
+- [ ] T017 [US1] Integrar lista de inclusão e `activation.enabled` no decisor “aplicar fix a este alvo” no fluxo do hook e sessão
+- [ ] T018 [US1] Implementar UI da lista (adicionar/remover, diálogo de ficheiro `.exe`, mensagens de limite/invalidação) em `src/MouseScrollFixer/UI/MainSettingsForm.cs`
+- [ ] T019 [US1] Persistir alterações da lista e refletir no comportamento sem exigir reinício do Windows (salvo limitação documentada)
+- [ ] T020 [P] [US1] Opcional: testes de validação de `AppConfig` / regras de inclusão em `tests/MouseScrollFixer.Tests/Configuration/` conforme `contracts/app-config.schema.json`
+
+**Checkpoint**: Critérios de aceite P1 da especificação verificáveis no ambiente de referência.
+
+---
+
+## Fase 5: História de utilizador 2 — Controlo de ativação (Prioridade: P2)
+
+**Objetivo**: Ligar/desligar o fix sem reinstalar o SO; persistir `activation.enabled` entre sessões; alinhar primeira preferência ao instalador quando existir (RF-002, RF-003).
+
+**Teste independente**: Alternar estado e observar o mesmo aplicativo de teste; reiniciar o Windows e confirmar CS-005 quando aplicável.
+
+- [ ] T021 [US2] Expor controlo claro de ativação (mesmo formulário ou bandeja) com persistência imediata em `src/MouseScrollFixer/UI/MainSettingsForm.cs` e `TrayApplication.cs`
+- [ ] T022 [US2] Garantir que `ScrollFixerSession` aplica/remove o hook quando `activation.enabled` muda e grava com validação
+- [ ] T023 [US2] Documentar na UI ou ajuda embutida **o que muda** com o fix ligado (RF-003) em recursos pt-BR
+- [ ] T024 [P] [US2] Preparar ou alinhar passo de instalador (Inno Setup / WiX / MSIX) com checkbox «Ativar o fix ao concluir» e escrita da primeira preferência em `installer/` ou documentação em `installer/README.md`, conforme `quickstart.md`
+
+**Checkpoint**: RF-002 e cenários P2 de ativação cobertos.
+
+---
+
+## Fase 6: História de utilizador 3 — Encerramento e recuperação (Prioridade: P3)
+
+**Objetivo**: Sair sem deixar o sistema inconsistente; após reinício, preferência persistida e comportamento coerente (P3, CS-003, CS-005).
+
+**Teste independente**: Encerramento pelo menu da bandeja, reinício de sessão, verificação de hook desinstalado e JSON válido.
+
+- [ ] T029 [US3] Garantir desinstalação do hook e libertação de recursos no encerramento normal em `ScrollFixerSession` e `TrayApplication`
+- [ ] T030 [US3] Persistir último estado em `ApplicationExitPersistence` / `Application.ApplicationExit` em `src/MouseScrollFixer/App/ApplicationExitPersistence.cs` e `Program.cs`
+- [ ] T031 [US3] Validar roteiro pós-reinício: último `activation.enabled` aplicado e ausência de efeitos indesejados documentados (lista de regressão)
+
+**Checkpoint**: P3 e critérios de encerramento satisfeitos.
+
+---
+
+## Fase 7: Polimento e requisitos transversais
+
+**Objetivo**: Conflitos (RF-007), impacto mínimo, strings, verificação final com `quickstart.md`.
+
+- [ ] T032 [P] Completar ou rever heurísticas em `src/MouseScrollFixer/Core/ConflictDetection/ConflictDetector.cs` e notificação ao utilizador (sem precedência automática)
+- [ ] T033 Rever textos de erro e estados «fix ativo/inativo» para RF-005 em recursos pt-BR
+- [ ] T034 [P] Confirmar ausência de telemetria e dados remotos não autorizados (RF-010) e documentar verificação opcional de atualizações apenas se existir
+- [ ] T035 Executar validação manual com `specs/001-mouse-scroll-fix/quickstart.md` e checklist em `specs/001-mouse-scroll-fix/checklists/regression.md`
 
 ---
 
@@ -115,60 +135,68 @@ description: "Lista de tarefas para implementação da feature 001-mouse-scroll-
 
 ### Dependências entre fases
 
-- **Fase 1**: Sem dependências externas
-- **Fase 2**: Depende da Fase 1 — **bloqueia** todas as histórias
-- **Fases 3–5 (US1 → US3)**: Dependem da Fase 2; ordem sugerida **P1 → P2 → P3** (também é a ordem de prioridade na `spec.md`)
-- **Fase 6**: Depende das histórias pretendidas para o incremento
+- **Fase 1**: Sem dependências externas.
+- **Fase 2**: Depende da Fase 1 — **bloqueia** todas as histórias.
+- **Fase 3 (US4)**: Depende da Fase 2; **antecede** US1/US2 para RF-011 e RF-012 no binário.
+- **Fases 4–6 (US1, US2, US3)**: Dependem da Fase 2 e **de preferência** da Fase 3 concluída. Entre si: **US1** (valor central do scroll); **US2** reforça controlo explícito e documentação; **US3** fecha ciclo de vida.
+- **Fase 7**: Depende das fases anteriores conforme o âmbito a polir.
 
 ### Dependências entre histórias
 
-- **US1 (P1)**: Após Fase 2; não depende de US2/US3
-- **US2 (P2)**: Após Fase 2 e idealmente com US1 já integrada (bandeja + sessão); testável de forma independente ao alternar estado
-- **US3 (P3)**: Após ter hook e persistência (tipicamente após US1–US2)
+- **US4 (P2)**: Após fundamento (Fase 2); requer separador de configurações identificável (`MainSettingsForm` da Fase 2); integra `Program.cs` e bandeja — **antes** de US1 nesta lista para evitar violação de RF-011/012 em entregas intermédias.
+- **US1 (P1)**: Após Fase 2 e, de preferência, Fase 3; valor central do produto.
+- **US2 (P2)**: Melhor após US1 ter hook e lista testáveis; pode sobrepor-se parcialmente a trabalho já feito na bandeja.
+- **US3 (P3)**: Depende de hook e persistência definidos (US1/US2).
+
+### Dentro de cada história
+
+- P/Invoke e resolução de janela antes ou em paralelo com normalização; UI da lista em paralelo com testes de contrato se existirem.
+- Hook sempre após validação de configuração e sessão.
 
 ### Oportunidades de paralelização
 
-- T002, T003 em paralelo após T001
-- T006 em paralelo com T005 após T004 disponível para tipos nativos (ajustar se T006 só precisar de POCOs — pode paralelizar com T004/T005 em parte)
-- T015 em paralelo com outras tarefas US1 após existir esqueleto do formulário
-- T022, T023, T024 em paralelo na fase de polimento
+- Tarefas **[P]** na mesma fase (ficheiros diferentes).
+- Modelos de configuração em paralelo com declarações Win32 na Fase 2.
+- `WindowTargetResolver` em paralelo com `ScrollNormalizer` após contrato de mensagens definido.
 
-### Exemplo de paralelização — US1
+---
+
+## Exemplo paralelo: US1
 
 ```text
-# Após T013 (coordenador) definido, pode avançar UI em T014 enquanto se refinam strings em T015:
-Tarefa: "MainSettingsForm em src/MouseScrollFixer/UI/MainSettingsForm.cs"
-Tarefa: "Strings.pt-BR em src/MouseScrollFixer/UI/Resources/Strings.pt-BR.resx"
+# Em paralelo após T028 (US4 concluída):
+T014 LowLevelMouseHook em src/MouseScrollFixer/Hooks/LowLevelMouseHook.cs
+T015 WindowTargetResolver em src/MouseScrollFixer/Core/ScrollNormalization/WindowTargetResolver.cs
 ```
 
 ---
 
 ## Estratégia de implementação
 
-### MVP primeiro (apenas US1)
+### MVP primeiro (RF-011/012 antes do núcleo de scroll)
 
-1. Concluir Fase 1 e Fase 2  
-2. Concluir Fase 3 (US1)  
-3. **Parar e validar** com `quickstart.md` e cenários P1  
-4. Opcional: demonstração / release interna
+1. Concluir Fases 1 e 2.
+2. Concluir Fase 3 (US4 — instância única e aviso de arranque).
+3. Concluir Fase 4 (US1).
+4. **Parar e validar** com roteiro P1 e `quickstart.md` (secção uso mínimo), incluindo CS-006 onde aplicável.
 
 ### Entrega incremental
 
-1. Fundações → US1 → validar  
-2. US2 → validar alternância e persistência  
-3. US3 → validar encerramento e reinício  
-4. Polimento (RF-007, testes de validação, checklist)
+1. Fundamento → US4 → instância única e feedback de arranque conforme especificação.
+2. US1 → demonstração de valor (scroll).
+3. US2 → confiança e persistência explícita.
+4. US3 → robustez de encerramento.
+5. Fase 7 → qualidade de release.
 
-### Grafo de conclusão das histórias (ordem sugerida)
+### Equipa paralela (referência)
 
-```text
-Fase 1 ──► Fase 2 ──► US1 (P1) ──► US2 (P2) ──► US3 (P3) ──► Polimento
-```
+- Após Fase 2: um desenvolvedor em US4 (mutex/IPC + avisos), outro em paralelo em contratos/testes de configuração e strings pt-BR; após T028, paralelizar T014/T015 conforme exemplo acima.
 
 ---
 
 ## Notas
 
-- Tarefas **[P]** assumem ficheiros ou responsabilidades distintas para evitar conflitos de merge
-- Cada história deve permanecer **testável de forma independente** onde a especificação assim o indica
-- O contrato JSON em `specs/001-mouse-scroll-fix/contracts/app-config.schema.json` é a referência de validação; manter alinhamento com `AppConfigValidator` e testes em T023
+- **[P]** = ficheiros distintos, sem dependência de ordem entre si.
+- **[USn]** liga a rastreio na `spec.md`.
+- Marcar tarefas concluídas com `[x]` durante `/speckit.implement`.
+- Evitar tarefas vagas ou conflitos no mesmo ficheiro sem coordenação.
