@@ -1,58 +1,68 @@
-# --- Build e artefatos .NET ---
+# Build .NET / MSBuild
 [Bb]in/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-artifacts/
 publish/
 out/
+artifacts/
 
-# Pastas de configuração de build típicas
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii]n32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-
-# NuGet
-*.nupkg
-*.snupkg
-**/packages/*
-!**/packages/build/
-*.nuget.props
-*.nuget.targets
-project.lock.json
-project.fragment.lock.json
-
-# Resultados de testes
+# Resultados de testes e cobertura
 [Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
 *.trx
 *.coverage
 *.coveragexml
+coverage*.json
+coverage*.xml
+*.lcov
 
-# --- Visual Studio / MSBuild ---
+# Pacotes NuGet (restauração local)
+**/packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+
+# Visual Studio / MSBuild
 .vs/
 *.rsuser
 *.suo
 *.user
 *.userosscache
+*.sln.docstates
 *.userprefs
 *.pidb
 *.svclog
 *.cachefile
 *.VC.db
 *.VC.VC.opendb
+*.opensdf
+*.sdf
+*.dbmdl
+*.jfm
+*.publishsettings
+orleans.codegen.cs
 
-# --- JetBrains Rider ---
+# JetBrains Rider / ReSharper
 .idea/
 *.sln.iml
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
 
-# --- Windows ---
+# VS Code (opcional: descomente se não quiser versionar config local)
+# .vscode/*
+# !.vscode/extensions.json
+# !.vscode/launch.json
+# !.vscode/tasks.json
+
+# Ferramentas auxiliares
+*.DotCover
+*.ncrunch*
+.*crunch*.local.xml
+_NCrunch_*
+
+# Windows
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
@@ -60,15 +70,23 @@ ehthumbs_vista.db
 [Dd]esktop.ini
 $RECYCLE.BIN/
 
-# --- Ferramentas / temporários ---
+# macOS / Linux (colaboradores em outros SOs)
+.DS_Store
+.AppleDouble
+.LSOverride
+*~
+
+# Ficheiros temporários e de backup
 *.tmp
 *.temp
 *.bak
 *.swp
-*~
+*.swo
 
-# --- Ambiente local (segredos; não versionar) ---
-.env
-.env.local
+# Secrets e credenciais (nunca versionar)
 *.pfx
-*.snk
+secrets.json
+appsettings.*.local.json
+*.key
+.env
+.env.*

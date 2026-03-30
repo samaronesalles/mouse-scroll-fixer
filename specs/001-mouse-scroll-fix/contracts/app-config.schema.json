@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.mouse-scroll-fixer/contracts/app-config.schema.json",
+  "title": "MouseScrollFixer AppConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "activation", "inclusionList"],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Versão incompatível do formato; incrementar em mudanças breaking."
+    },
+    "activation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled"],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Se o fix está ativo (normalização aplicável à lista de inclusão)."
+        },
+        "lastModifiedUtc": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Opcional: última alteração da preferência (UTC ISO 8601)."
+        }
+      }
+    },
+    "inclusionList": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/inclusionEntry" },
+      "description": "Lista de inclusão; no máximo 64 entradas no MVP."
+    },
+    "behavior": {
+      "$ref": "#/$defs/behaviorProfile"
+    }
+  },
+  "$defs": {
+    "inclusionEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "executablePath", "matchKind"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Identificador estável para operações na UI."
+        },
+        "executablePath": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Caminho absoluto do executável alvo."
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "matchKind": {
+          "type": "string",
+          "enum": ["ExecutablePath"]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "behaviorProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["touchpadSameAsWheel"],
+      "properties": {
+        "invertVertical": { "type": "boolean" },
+        "linesPerNotchApprox": { "type": "number", "minimum": 0 },
+        "touchpadSameAsWheel": {
+          "type": "boolean",
+          "description": "MVP: true — mesma regra para touchpad e roda quando possível."
+        }
+      }
+    }
+  }
+}

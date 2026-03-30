@@ -1,0 +1,37 @@
+﻿---
+description: Project Development Guidelines
+globs: ["**/*"]
+alwaysApply: true
+---
+# mouse-scroll-fixer Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2026-03-29
+
+## Active Technologies
+- C# 12 / .NET 8 (net8.0-windows) + WinForms, P/Invoke (user32/kernel32), System.Text.Json (001-mouse-scroll-fix)
+- ficheiro JSON local no perfil do utilizador (001-mouse-scroll-fix)
+
+
+
+## Project Structure
+
+```text
+src/
+tests/
+```
+
+## Commands
+
+# Add commands for 
+
+## Code Style
+
+General: Follow standard conventions
+
+## Recent Changes
+- 001-mouse-scroll-fix: Added C# 12 / .NET 8 (net8.0-windows) + WinForms, P/Invoke (user32/kernel32), System.Text.Json
+
+
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

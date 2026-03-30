@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Tray_OpenSettings" xml:space="preserve">
+    <value>Abrir configurações</value>
+  </data>
+  <data name="Tray_Exit" xml:space="preserve">
+    <value>Sair</value>
+  </data>
+  <data name="Tray_MenuActivateFix" xml:space="preserve">
+    <value>Ativar fix</value>
+  </data>
+  <data name="Tray_MenuDeactivateFix" xml:space="preserve">
+    <value>Desativar fix</value>
+  </data>
+  <data name="Tray_StatusFixOn" xml:space="preserve">
+    <value>MouseScrollFixer — fix ligado</value>
+  </data>
+  <data name="Tray_StatusFixOff" xml:space="preserve">
+    <value>MouseScrollFixer — fix desligado</value>
+  </data>
+  <data name="MainSettings_Title" xml:space="preserve">
+    <value>Configurações — MouseScrollFixer</value>
+  </data>
+  <data name="MainSettings_Activation" xml:space="preserve">
+    <value>Ativar o fix de scroll (lista de inclusão)</value>
+  </data>
+  <data name="MainSettings_StatusFixOn" xml:space="preserve">
+    <value>Estado: fix ligado — a lista de inclusão aplica-se à janela em foco.</value>
+  </data>
+  <data name="MainSettings_StatusFixOff" xml:space="preserve">
+    <value>Estado: fix desligado — o scroll não é alterado por este utilitário.</value>
+  </data>
+  <data name="MainSettings_Help" xml:space="preserve">
+    <value>Com o fix ligado e um aplicativo na lista, o scroll vertical do rato e do touchpad (quando aplicável) é normalizado para um passo mais previsível. Apenas os programas listados são afetados; os restantes mantêm o comportamento do Windows.</value>
+  </data>
+  <data name="MainSettings_Add" xml:space="preserve">
+    <value>Adicionar executável…</value>
+  </data>
+  <data name="MainSettings_Remove" xml:space="preserve">
+    <value>Remover selecionado</value>
+  </data>
+  <data name="MainSettings_ColumnDisplayName" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="MainSettings_ColumnPath" xml:space="preserve">
+    <value>Caminho do executável</value>
+  </data>
+  <data name="MainSettings_AddExeFilter" xml:space="preserve">
+    <value>Executáveis (*.exe)|*.exe|Todos os ficheiros (*.*)|*.*</value>
+  </data>
+  <data name="MainSettings_ErrorTitle" xml:space="preserve">
+    <value>MouseScrollFixer</value>
+  </data>
+  <data name="MainSettings_ErrorInvalid" xml:space="preserve">
+    <value>A configuração é inválida:</value>
+  </data>
+  <data name="MainSettings_ErrorLimit" xml:space="preserve">
+    <value>O limite de {0} entradas na lista de inclusão foi atingido.</value>
+  </data>
+  <data name="MainSettings_ErrorDuplicate" xml:space="preserve">
+    <value>Este executável já está na lista.</value>
+  </data>
+  <data name="MainSettings_ErrorNotExe" xml:space="preserve">
+    <value>Selecione um ficheiro .exe válido e existente.</value>
+  </data>
+  <data name="MainSettings_ErrorSave" xml:space="preserve">
+    <value>Não foi possível gravar a configuração.</value>
+  </data>
+  <data name="Program_HookFailed" xml:space="preserve">
+    <value>Não foi possível instalar o hook de baixo nível do rato. O fix pode não funcionar até reiniciar a aplicação ou verificar permissões.</value>
+  </data>
+  <data name="Conflict_BalloonTitle" xml:space="preserve">
+    <value>Possível conflito com outro software</value>
+  </data>
+  <data name="Conflict_BalloonText" xml:space="preserve">
+    <value>Detetámos processos que costumam alterar o scroll ou o rato ({0}). O MouseScrollFixer não desativa automaticamente outros programas — ajuste ou desative um dos lados se notar comportamento estranho.</value>
+  </data>
+</root>
