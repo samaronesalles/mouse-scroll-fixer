@@ -12,11 +12,11 @@ Toda a compilação MSBuild deste repositório usa `Directory.Build.props` na ra
 
 | Conteúdo | Caminho |
 |----------|---------|
-| Executável e DLLs da app | `publish\out\MouseScrollFixer\<Debug\|Release>\net8.0-windows\` |
+| Executável e DLLs da app | `publish\out\MouseScrollFixer\<Debug\|Release>\net8.0-windows\win-x64\` |
 | Artefatos de testes | `publish\out\MouseScrollFixer.Tests\<Debug\|Release>\net8.0-windows\` |
 | Ficheiros intermédios MSBuild | `publish\obj\<NomeDoProjeto>\` |
 
-O **último executável** da app após `dotnet build` está sempre em `publish\out\MouseScrollFixer\<config>\net8.0-windows\MouseScrollFixer.exe` (para testes manuais, preferir **Release** quando for o caso).
+O **último executável** da app após `dotnet build` está em `publish\out\MouseScrollFixer\<config>\net8.0-windows\win-x64\MouseScrollFixer.exe` (RID `win-x64` no projeto da app; para testes manuais, preferir **Release** quando for o caso).
 
 ## Comandos recomendados
 
@@ -24,8 +24,9 @@ Na raiz do repositório:
 
 - Compilar solução: `dotnet build MouseScrollFixer.sln -c Release`
 - Testes: `dotnet test MouseScrollFixer.sln -c Release`
-- Pacote de publicação numa pasta fixa (ex.: `publish\app`):  
-  `dotnet publish src\MouseScrollFixer\MouseScrollFixer.csproj -c Release -o publish\app`
+- Pacote de publicação (single-file autocontido, um `.exe` principal):  
+  `dotnet publish src\MouseScrollFixer\MouseScrollFixer.csproj -c Release -o publish\app`  
+  Ver `docs/build.md`.
 
 ## Não fazer
 

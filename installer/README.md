@@ -6,7 +6,7 @@ Este repositório pode incluir **no futuro** um instalador (por exemplo **Inno S
 
 - Não há script de build de instalador obrigatório na raiz; o fluxo **portátil** e a definição da preferência na **interface** (ou ficheiro JSON sob `%LocalAppData%\MouseScrollFixer\`) cobrem o MVP.
 - Para um **instalador** com checkbox de ativação, o fluxo típico seria:
-  1. Copiar o executável e dependências para `{app}`.
+  1. Copiar o executável publicado (ficheiro único principal; ver `docs/build.md`) para `{app}`.
   2. Opcional (tarefa marcada): na primeira execução pós-instalação, **gravar** `activation.enabled` conforme a escolha (sem sobrescrever preferências já existentes válidas, salvo política de produto explícita).
   3. Opcional: atalho na bandeja e entrada em «Aplicações» / menu Iniciar.
 

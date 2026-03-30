@@ -28,8 +28,8 @@ tests/
 
 - Build (Release): `dotnet build MouseScrollFixer.sln -c Release`
 - Testes: `dotnet test MouseScrollFixer.sln -c Release`
-- Executável da app: `publish\out\MouseScrollFixer\Release\net8.0-windows\MouseScrollFixer.exe` (saídas centralizadas; ver regra `build-output-centralizado.mdc`)
-- Publicar para pasta única (ex.: `publish\app`): `dotnet publish src\MouseScrollFixer\MouseScrollFixer.csproj -c Release -o publish\app`
+- Executável da app (após build): `publish\out\MouseScrollFixer\Release\net8.0-windows\win-x64\MouseScrollFixer.exe` (saídas centralizadas; ver regra `build-output-centralizado.mdc`)
+- Publicar para pasta única (single-file autocontido; ver `docs/build.md`): `dotnet publish src\MouseScrollFixer\MouseScrollFixer.csproj -c Release -o publish\app`
 
 ## Code Style
 
@@ -37,6 +37,7 @@ General: Follow standard conventions
 
 ## Recent Changes
 - 001-mouse-scroll-fix: Added C# 12 / .NET 8 (net8.0-windows) + WinForms, P/Invoke (user32/kernel32), System.Text.Json
+- Publicação padrão: single-file autocontido `win-x64` (`docs/build.md`)
 
 
 

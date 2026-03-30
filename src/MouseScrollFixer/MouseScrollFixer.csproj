@@ -11,6 +11,16 @@
     <RootNamespace>MouseScrollFixer</RootNamespace>
     <AssemblyName>MouseScrollFixer</AssemblyName>
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
+    <!-- WFAC010: DPI via API/propriedade em vez de app.manifest -->
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <!-- Distribuição: um único .exe autocontido (runtime embutido); ver docs/build.md -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <!-- Reduz satélites do runtime a pt-BR (UI da app); ver docs/build.md -->
+    <SatelliteResourceLanguages>pt-BR</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
