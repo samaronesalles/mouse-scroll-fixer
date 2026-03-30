@@ -1,135 +1,77 @@
-# Contexto do Projeto — Mouse Scroll Fixer
+# Contexto do Projeto — MouseScrollFixer
 
-## 📌 Visão Geral
+## Visão geral
 
-O Mouse Scroll Fixer é uma aplicação desktop para Windows que roda em background (System Tray) e tem como objetivo habilitar o uso do scroll do mouse em aplicações legadas que não suportam esse comportamento nativamente.
+`MouseScrollFixer` é um utilitário desktop para Windows 11 que fica na bandeja e corrige o comportamento de scroll em aplicativos legados selecionados pelo usuário.
 
-O sistema melhora o comportamento padrão do Windows, permitindo que o scroll funcione na janela sob o cursor do mouse, mesmo sem foco — porém de forma controlada e configurável.
+O foco atual é **scroll vertical**. O produto intercepta `WM_MOUSEWHEEL`, identifica o app sob o cursor e aplica o fix **somente** quando o executável está na lista de inclusão.
 
----
+## Problema que o projeto resolve
 
-## 🎯 Problema
+Aplicações antigas podem ignorar ou tratar mal o scroll moderno. O usuário precisa de um comportamento previsível sem impactar todo o sistema.
 
-No Windows, o comportamento padrão exige que uma janela esteja em foco para receber eventos de scroll (`WM_MOUSEWHEEL`).
+Ferramentas globais sem filtro tendem a interferir em apps que já funcionam bem. Por isso o MouseScrollFixer usa whitelist por executável.
 
-Aplicações antigas (legadas) frequentemente:
+## Comportamento atual implementado
 
-* Não recebem scroll corretamente
-* Não respondem a eventos modernos de input
+1. O hook global (`WH_MOUSE_LL`) recebe o evento de mouse.
+2. Apenas eventos `WM_MOUSEWHEEL` são considerados (horizontal fica fora do MVP).
+3. O sistema resolve `HWND` sob o cursor e obtém o caminho do executável do processo dono.
+4. Se o executável não estiver em `inclusionList`, o evento segue normal.
+5. Se estiver na lista:
+   - aplica normalização conforme `behavior`;
+   - envia `WM_MOUSEWHEEL` por `PostMessageW` para o alvo efetivo (preferindo foco de teclado no mesmo processo);
+   - ou, em modo legado, converte para múltiplos `WM_VSCROLL`.
+6. O evento original é consumido para evitar duplicação.
 
-Ferramentas existentes como o WizMouse resolvem parcialmente o problema, porém:
+## Componentes principais
 
-* Aplicam comportamento global (sem filtro)
-* Interferem em aplicações modernas
-* Podem causar duplicação de eventos ou inconsistências
+- `Program` + `TrayApplication`: ciclo de vida da app e bandeja.
+- `ScrollFixerSession`: coordena hook, filtro por inclusão e despacho de mensagens.
+- `LowLevelMouseHook`: instalação/suspensão do `WH_MOUSE_LL`.
+- `WindowTargetResolver`: mapeia ponto do cursor para app/processo.
+- `ScrollNormalizer`: extrai/normaliza delta vertical.
+- `AppConfigStore` + `AppConfigValidator`: persistência e validação de `app-config.json`.
+- `SingleInstanceCoordinator`: instância única (mutex + pipe).
+- `MainSettingsForm`: UI para ativar fix, editar lista e ajustar comportamento.
 
----
+## Regras de negócio atuais
 
-## 💡 Solução Proposta
+- O fix só atua quando `activation.enabled = true`.
+- O fix só atua para executáveis explicitamente listados em `inclusionList`.
+- A lista é limitada a 64 entradas válidas.
+- Configuração inválida/corrompida cai para estado seguro e mostra aviso.
+- Não há telemetria nem envio remoto de uso.
 
-Criar uma aplicação que:
+## Persistência atual
 
-* Intercepta eventos globais de scroll do mouse
-* Identifica a janela sob o cursor
-* Redireciona o evento de scroll para essa janela
-* Aplica esse comportamento apenas em aplicações configuradas pelo usuário
+Local: `%LocalAppData%\MouseScrollFixer\`
 
----
+- `app-config.json` (principal)
+- `app-config.bak.json` (backup)
 
-## ⚙️ Funcionamento Técnico
-
-### Fluxo principal:
-
-1. Usuário gira o scroll do mouse
-2. Hook global intercepta o evento
-3. Sistema identifica posição do cursor
-4. Resolve qual janela está sob o cursor
-5. Obtém o processo dono da janela
-6. Verifica se o processo está na whitelist
-7. Se sim → envia `WM_MOUSEWHEEL` para a janela
-8. Se não → ignora
-
----
-
-## 🧩 Componentes do Sistema
-
-### 1. Mouse Hook Engine
-
-* Captura eventos globais de mouse
-* Usa `WH_MOUSE_LL`
-
-### 2. Window Resolver
-
-* Resolve HWND baseado na posição do cursor
-* Trata janelas filhas e raiz
-
-### 3. Process Filter
-
-* Lista de aplicações permitidas (whitelist)
-* Baseado em caminho completo do executável
-
-### 4. Scroll Dispatcher
-
-* Responsável por enviar eventos para a janela alvo
-
-### 5. Tray Application
-
-* Interface mínima via system tray
-* Permite ativar/desativar sistema
-* Acesso às configurações
-
-### 6. Config Manager
-
-* Persistência em arquivo JSON
-* Gerencia preferências do usuário
-
-### 7. Auto-start Manager
-
-* Controla inicialização com Windows
-
-### 8. Privilege Manager
-
-* Gerencia execução como administrador
-
----
-
-## 🧠 Regras de Negócio
-
-* O sistema só atua em aplicações explicitamente permitidas
-* O sistema pode ser ativado/desativado globalmente
-* Deve funcionar em background com baixo consumo
-* Não deve interferir em aplicações modernas
-
----
-
-## 📦 Persistência
-
-Formato JSON:
+Estrutura principal:
 
 ```json
 {
-  "enabled": true,
-  "autoStart": true,
-  "runAsAdmin": false,
-  "allowedApps": []
+  "schemaVersion": 1,
+  "activation": {
+    "enabled": false,
+    "lastModifiedUtc": "2026-03-30T12:34:56.0000000Z"
+  },
+  "inclusionList": [],
+  "behavior": {
+    "invertVertical": false,
+    "linesPerNotchApprox": 3.0,
+    "touchpadSameAsWheel": true,
+    "useVScrollFallback": false
+  }
 }
 ```
 
----
+## Limitações e escopo
 
-## ⚠️ Restrições Técnicas
-
-* Uso de hooks globais pode ser sensível a antivírus
-* Algumas aplicações não respondem a `WM_MOUSEWHEEL`
-* Aplicações elevadas exigem execução como admin
-
----
-
-## 🎯 Objetivos do Projeto
-
-* Criar alternativa superior ao WizMouse
-* Garantir controle granular por aplicação
-* Minimizar impacto no sistema
-* Arquitetura simples, modular e extensível
-
----
+- Suporte oficial atual: Windows 11.
+- MVP: apenas scroll vertical.
+- Não há hoje implementação de auto start com Windows.
+- Não há modo “executar como administrador” configurável na UI.

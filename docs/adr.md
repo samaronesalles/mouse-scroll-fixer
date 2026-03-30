@@ -1,124 +1,84 @@
-# ADR — Architectural Decision Records
+# ADR — Architectural Decision Records (estado atual)
 
-## ADR-001 — Linguagem e Plataforma
+Este documento reflete as decisões **implementadas hoje** no código.
 
-**Decisão:** Uso de C# com .NET (net8.0-windows)
+## ADR-001 — Linguagem e plataforma
 
-**Motivo:**
-
-* Integração nativa com Windows
-* Suporte fácil a Win32 via P/Invoke
-* Boa produtividade
-
-**Alternativas:**
-
-* Python (rejeitado: performance e distribuição)
-* C++ (rejeitado: complexidade desnecessária)
-
----
-
-## ADR-002 — UI Framework
-
-**Decisão:** Uso de WinForms (sem uso de designer)
+**Decisão:** C# 12 com .NET 8 (`net8.0-windows`), aplicação WinForms.
 
 **Motivo:**
+- Integração direta com APIs Win32 (P/Invoke).
+- Entrega simples de app residente em bandeja no Windows.
 
-* Suporte nativo a System Tray (`NotifyIcon`)
-* Simplicidade
+## ADR-002 — Captura global de scroll
 
----
-
-## ADR-003 — Captura de Eventos
-
-**Decisão:** Uso de `SetWindowsHookEx` com `WH_MOUSE_LL`
+**Decisão:** `SetWindowsHookEx` com `WH_MOUSE_LL` para interceptar eventos de mouse.
 
 **Motivo:**
+- Permite analisar `WM_MOUSEWHEEL` globalmente antes de o sistema entregar ao alvo.
+- Possibilita consumir o evento original quando o fix é aplicado (evita duplicação).
 
-* Captura global de eventos
-* Necessário para interceptar scroll
+## ADR-003 — Escopo funcional de entrada
 
----
-
-## ADR-004 — Identificação de Janela
-
-**Decisão:** Uso de `WindowFromPoint` + `GetAncestor`
+**Decisão:** MVP aplica correção **somente ao scroll vertical** (`WM_MOUSEWHEEL`).
 
 **Motivo:**
+- Escopo mais previsível para aplicações legadas.
+- `WM_MOUSEHWHEEL` (horizontal) permanece fora do MVP.
 
-* Permite identificar janela sob cursor corretamente
+## ADR-004 — Resolução de alvo sob o cursor
 
----
-
-## ADR-005 — Comunicação com janela alvo
-
-**Decisão:** Uso de `SendMessage` / `PostMessage`
+**Decisão:** Resolver alvo por ponto (`WindowFromPoint`) e processo dono da janela (`GetAncestor` + PID + caminho do executável).
 
 **Motivo:**
+- Permite aplicar regra por aplicativo real sob o cursor, não apenas por janela em foco global.
+- Dá base para lista de inclusão por caminho completo de executável.
 
-* Simula evento de scroll
+## ADR-005 — Entrega do scroll ao aplicativo legado
 
----
-
-## ADR-006 — Filtro por Aplicação
-
-**Decisão:** Whitelist baseada em caminho do executável
-
-**Motivo:**
-
-* Maior precisão
-* Evita conflitos com apps similares
-
----
-
-## ADR-007 — Persistência
-
-**Decisão:** Arquivo JSON local
+**Decisão:** Reenvio por `PostMessageW`:
+- `WM_MOUSEWHEEL` para o `HWND` efetivo (com preferência por `hwndFocus` do mesmo processo);
+- opcionalmente `WM_VSCROLL` (`SB_LINEUP`/`SB_LINEDOWN`) em modo legado.
 
 **Motivo:**
+- Compatibilidade com apps antigos que não tratam `WM_MOUSEWHEEL`.
+- Evita bloqueio de thread de UI por chamadas síncronas.
 
-* Simples
-* Fácil manutenção
+## ADR-006 — Filtro por aplicação (whitelist)
 
----
-
-## ADR-008 — Inicialização com Windows
-
-**Decisão:** Registro no Registry (HKCU)
+**Decisão:** Aplicar fix somente para executáveis presentes em `inclusionList` (`matchKind = ExecutablePath`).
 
 **Motivo:**
+- Controle granular por app.
+- Reduz interferência em aplicações fora do escopo do usuário.
 
-* Simples e suficiente
+## ADR-007 — Persistência local e robustez
 
----
-
-## ADR-009 — Execução como Administrador
-
-**Decisão:** Opcional, configurável
+**Decisão:** Persistência em `%LocalAppData%\MouseScrollFixer\app-config.json` com backup (`app-config.bak.json`) e gravação defensiva.
 
 **Motivo:**
+- Configuração local, sem telemetria.
+- Recuperação de estado em caso de JSON inválido/corrompido.
 
-* Necessário para apps elevados
-* Evita exigir permissão sempre
+## ADR-008 — Instância única e ativação da UI existente
 
----
-
-## ADR-010 — Distribuição
-
-**Decisão:** Publicação framework-dependent single-file
+**Decisão:** Mutex nomeado + pipe nomeado para garantir uma instância por sessão de usuário; segunda execução sinaliza a primeira para abrir/restaurar configurações.
 
 **Motivo:**
+- Evita múltiplos processos concorrentes.
+- Melhora UX quando o app já está apenas na bandeja.
 
-* Reduzir drasticamente o tamanho do executável distribuído
-* Aceitar como pré-requisito o .NET 8 Desktop Runtime instalado na máquina de destino
+## ADR-009 — Distribuição do executável
 
----
-
-## ADR-011 — Arquitetura Modular
-
-**Decisão:** Separação em Core, Services, UI
+**Decisão:** Publicação `win-x64`, single-file, framework-dependent (`SelfContained=false`).
 
 **Motivo:**
+- Distribuição simples com um `.exe` principal.
+- Pré-requisito explícito: .NET 8 Desktop Runtime no destino.
 
-* Facilita manutenção e testes
+## ADR-010 — Compatibilidade de sistema operacional
 
----
+**Decisão:** Suporte de runtime somente para Windows 11 (checagem no arranque).
+
+**Motivo:**
+- Alinhamento ao escopo do MVP e aos critérios atuais de validação.

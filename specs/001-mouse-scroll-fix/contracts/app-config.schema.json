@@ -75,6 +75,10 @@
         "touchpadSameAsWheel": {
           "type": "boolean",
           "description": "MVP: true — mesma regra para touchpad e roda quando possível."
+        },
+        "useVScrollFallback": {
+          "type": "boolean",
+          "description": "Quando true, usa WM_VSCROLL para aplicações legadas que ignoram WM_MOUSEWHEEL."
         }
       }
     }

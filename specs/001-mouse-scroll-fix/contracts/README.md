@@ -4,7 +4,7 @@ Este diretório define **contratos estáveis** entre componentes e para **testes
 
 | Artefato | Descrição |
 |----------|-----------|
-| [app-config.schema.json](./app-config.schema.json) | Schema JSON Schema do ficheiro de configuração persistido (lista de inclusão, ativação, perfil de comportamento). |
+| [app-config.schema.json](./app-config.schema.json) | Schema JSON do ficheiro persistido (lista de inclusão, ativação e perfil de comportamento incluindo fallback legado por `WM_VSCROLL`). |
 
 **Superfícies adicionais do MVP**:
 

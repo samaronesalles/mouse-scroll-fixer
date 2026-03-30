@@ -35,7 +35,7 @@ Documentação auxiliar: `installer/README.md` na raiz do repositório.
 1. Abrir o utilitário a partir da bandeja ou atalho.
 2. **Ativar** o fix (se desligado).
 3. Adicionar **um** aplicativo à lista de inclusão (por exemplo, escolher o `.exe` através do diálogo).
-4. Colocar o foco numa janela desse aplicativo e usar a **roda** ou o **scroll vertical do touchpad**.
+4. Deixar o cursor sobre uma área rolável desse aplicativo e usar a **roda** ou o **scroll vertical do touchpad**.
 5. **Desativar** o fix e repetir o passo 4 — deve observar-se diferença de comportamento nos cenários de teste acordados.
 
 ## Roteiro de verificação rápida (ligado aos critérios de aceite)
@@ -43,7 +43,7 @@ Documentação auxiliar: `installer/README.md` na raiz do repositório.
 | # | Ação | Resultado esperado |
 |---|------|-------------------|
 | 1 | Lista vazia + fix ligado | Sem alteração de scroll para apps não listados (comportamento fora da lista = sistema). |
-| 2 | Adicionar app válido | Entrada aparece na lista; scroll vertical segue regra normalizada com foco nessa janela. |
+| 2 | Adicionar app válido | Entrada aparece na lista; com cursor sobre esse app, scroll vertical segue regra normalizada. |
 | 3 | Remover entrada | Deixa de aplicar sem reinício do SO (salvo limitação documentada). |
 | 4 | Alternar ligado/desligado | Comportamento P1 / sistema conforme P2. |
 | 5 | Reinício do Windows com último estado “ligado” | CS-005 — fix ativo sem reativar manualmente. |

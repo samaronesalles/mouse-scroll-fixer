@@ -36,8 +36,10 @@ Se o runtime não estiver instalado, o Windows mostrará a mensagem padrão de a
 
 ### Ficheiros extra na pasta de publicação
 
-- **`MouseScrollFixer.pdb`**: símbolos de depuração. Para distribuição ao público costuma **omitir** do pacote (ZIP/instalador).
-- **Pastas de idioma** (por exemplo `pt-BR\`, `cs\`, …): podem aparecer junto ao `.exe`; em muitos casos estão vazias ou só são usadas em cenários específicos. Para um pacote mínimo, **basta o `.exe`**; se quiser um ZIP “limpo”, pode incluir apenas o `.exe`.
+- **`MouseScrollFixer.pdb`**: símbolos de depuração. Para distribuição ao público, normalmente pode ficar fora do pacote final.
+- **Pastas de idioma satélite**: a app limita satélites para `pt-BR` no projeto; dependendo do ambiente de build, podem existir ficheiros auxiliares além do `.exe`.
+
+Para distribuição portátil mínima, o ficheiro essencial continua a ser **`MouseScrollFixer.exe`** (com .NET Desktop Runtime instalado no destino).
 
 ### Propriedades relevantes no `.csproj`
 

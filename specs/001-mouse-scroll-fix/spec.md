@@ -2,7 +2,7 @@
 
 **Branch da feature**: `001-mouse-scroll-fix`  
 **Criado**: 27/03/2026  
-**Status**: Rascunho  
+**Status**: Implementado (MVP) e em manutenção  
 **Entrada**: Descrição do usuário: "Utilitário Windows para corrigir ou normalizar o comportamento do scroll do mouse de forma previsível, com impacto mínimo no sistema e comportamento verificável."
 
 ## Clarifications

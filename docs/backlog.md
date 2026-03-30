@@ -1,176 +1,39 @@
-# Backlog do Produto — Mouse Scroll Fixer
-
-## 🧩 Feature 1 — Base do Projeto
-
-### User Story
-
-Como desenvolvedor, quero criar a base do projeto para iniciar o desenvolvimento.
-
-### Descrição
-
-Criação da estrutura inicial com .NET.
-
-### Requisitos Funcionais
-
-* Criar projeto .NET
-* Estrutura de pastas
-
-### Requisitos Não Funcionais
-
-* Organização clara
-* Código modular
-
----
-
-## 🧩 Feature 2 — Hook Global de Mouse
-
-### User Story
-
-Como sistema, quero capturar eventos de scroll globalmente.
-
-### Descrição
-
-Implementação do hook `WH_MOUSE_LL`.
-
-### Requisitos Funcionais
-
-* Interceptar `WM_MOUSEWHEEL`
-
-### Requisitos Não Funcionais
-
-* Baixa latência
-* Estável
-
----
-
-## 🧩 Feature 3 — Identificação da Janela
-
-### User Story
-
-Como sistema, quero identificar a janela sob o cursor.
-
-### Descrição
-
-Uso de `WindowFromPoint`.
-
-### Requisitos Funcionais
-
-* Obter HWND correto
-
----
-
-## 🧩 Feature 4 — Resolução de Processo
-
-### User Story
-
-Como sistema, quero identificar o processo da janela.
-
-### Descrição
-
-Uso de `GetWindowThreadProcessId`.
-
----
-
-## 🧩 Feature 5 — Filtro por Aplicação
-
-### User Story
-
-Como usuário, quero definir quais apps usarão o scroll.
-
-### Descrição
-
-Whitelist baseada em executável.
-
----
-
-## 🧩 Feature 6 — Scroll Dispatcher
-
-### User Story
-
-Como sistema, quero redirecionar o scroll.
-
-### Descrição
-
-Enviar `WM_MOUSEWHEEL`.
-
----
-
-## 🧩 Feature 7 — Configuração Persistente
-
-### User Story
-
-Como usuário, quero salvar minhas preferências.
-
-### Descrição
-
-Arquivo JSON.
-
----
-
-## 🧩 Feature 8 — Tray Icon
-
-### User Story
-
-Como usuário, quero controlar o app pelo tray.
-
-### Descrição
-
-Menu com opções básicas.
-
----
-
-## 🧩 Feature 9 — Ativar/Desativar Sistema
-
-### User Story
-
-Como usuário, quero ligar/desligar o sistema.
-
----
-
-## 🧩 Feature 10 — Tela de Configuração
-
-### User Story
-
-Como usuário, quero gerenciar apps permitidos.
-
----
-
-## 🧩 Feature 11 — Auto Start
-
-### User Story
-
-Como usuário, quero iniciar com Windows.
-
----
-
-## 🧩 Feature 12 — Execução como Admin
-
-### User Story
-
-Como usuário, quero rodar como admin.
-
----
-
-## 🧩 Feature 13 — Logs
-
-### User Story
-
-Como desenvolvedor, quero logs para debug.
-
----
-
-## 🧩 Feature 14 — Otimização de Performance
-
-### User Story
-
-Como sistema, quero ser leve.
-
----
-
-## 🧩 Feature 15 — Build e Distribuição
-
-### User Story
-
-Como usuário, quero instalar facilmente.
-
----
+# Backlog do Produto — MouseScrollFixer
+
+Este backlog foi atualizado para o estado real do código atual.
+
+## Entregue no MVP atual
+
+- Base da solução .NET 8 (`src` + `tests`) com build centralizado em `publish\`.
+- Hook global `WH_MOUSE_LL` para interceptação de scroll.
+- Resolução de janela/processo por ponto sob o cursor.
+- Filtro por aplicação via `inclusionList` (whitelist por caminho do executável).
+- UI WinForms na bandeja com:
+  - ativar/desativar fix;
+  - adicionar/remover/editar entradas da lista;
+  - ajuste de comportamento (`invertVertical`, `linesPerNotchApprox`, `touchpadSameAsWheel`, `useVScrollFallback`).
+- Persistência local em `%LocalAppData%\MouseScrollFixer\app-config.json` com backup.
+- Instância única com ativação da UI existente na segunda execução.
+- Aviso de arranque na bandeja e notificação de possível conflito com software de terceiros.
+- Testes automatizados de validação de configuração (`AppConfigValidatorTests`).
+
+## Backlog de evolução (não implementado ainda)
+
+## 1) Scroll horizontal (fora do MVP)
+- **Objetivo**: avaliar suporte opcional a `WM_MOUSEHWHEEL`.
+- **Risco**: maior chance de interferência com apps modernos.
+
+## 2) Auto start com Windows
+- **Objetivo**: opção explícita de iniciar com a sessão do usuário.
+- **Estado**: hoje não há controle de auto start na UI nem persistência dedicada.
+
+## 3) Suporte a apps elevadas
+- **Objetivo**: definir estratégia clara para cenários com privilégios diferentes.
+- **Estado**: app roda `asInvoker`; não há modo configurável “rodar como admin”.
+
+## 4) Melhorias de testes
+- **Objetivo**: ampliar cobertura além de validação de config (ex.: normalização e comportamento de sessão).
+
+## 5) Instalador oficial
+- **Objetivo**: empacotar distribuição com fluxo guiado e opção de primeira preferência de ativação.
+- **Estado**: documentação existe em `installer/README.md`, sem pipeline obrigatório no repo.

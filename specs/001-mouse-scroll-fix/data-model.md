@@ -55,6 +55,7 @@ Agrupa parâmetros de **como** o scroll vertical é normalizado (entidade “se 
 | `invertVertical` | booleano | não | Se `true`, inverte a direção vertical em relação ao evento de entrada (só se alinhado aos testes). |
 | `linesPerNotchApprox` | número | não | Metáfora de “linhas” por detente; valores concretos no código e roteiro de testes. |
 | `touchpadSameAsWheel` | booleano | sim | MVP: `true` — mesma regra quando o mecanismo permitir. |
+| `useVScrollFallback` | booleano | não | Se `true`, converte scroll para `WM_VSCROLL` (`SB_LINEUP`/`SB_LINEDOWN`) para apps legadas que ignoram `WM_MOUSEWHEEL`. |
 
 ---
 
