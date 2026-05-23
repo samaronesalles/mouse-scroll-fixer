@@ -132,5 +132,6 @@ internal sealed class AppConfigStore
     internal static void MergeDefaults(AppConfig config)
     {
         config.Behavior ??= BehaviorProfile.CreateDefault();
+        config.Startup ??= StartupPreferences.CreateDefault();
     }
 }

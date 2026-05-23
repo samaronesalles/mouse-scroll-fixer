@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using MouseScrollFixer.App;
 using MouseScrollFixer.Core.Configuration;
+using MouseScrollFixer.Core.Startup;
 using MouseScrollFixer.UI.Resources;
 
 namespace MouseScrollFixer.UI;
@@ -20,6 +22,12 @@ internal sealed partial class MainSettingsForm : Form
     private Label _activationLastModifiedLabel = null!;
     private Label _statusLabel = null!;
     private GroupBox _behaviorGroup = null!;
+    private GroupBox _startupGroup = null!;
+    private CheckBox _autoStartCheckBox = null!;
+    private CheckBox _runAsAdminCheckBox = null!;
+    private Panel _startupMisalignmentPanel = null!;
+    private Label _startupMisalignmentLabel = null!;
+    private Button _reactivateAutoStartButton = null!;
     private CheckBox _touchpadSameAsWheelCheck = null!;
     private CheckBox _invertVerticalCheck = null!;
     private Label _linesPerNotchLabel = null!;
@@ -34,6 +42,7 @@ internal sealed partial class MainSettingsForm : Form
     private Button _editButton = null!;
     private bool _suppressActivationPersist;
     private bool _suppressBehaviorPersist;
+    private bool _suppressStartupPersist;
 
     public MainSettingsForm(AppConfigStore store, AppConfig config, ScrollFixerSession session, Action? onConfigChanged = null)
     {
@@ -54,10 +63,12 @@ internal sealed partial class MainSettingsForm : Form
     {
         _suppressActivationPersist = true;
         _suppressBehaviorPersist = true;
+        _suppressStartupPersist = true;
         try
         {
             _activationCheckBox.Checked = _config.Activation.Enabled;
             LoadBehaviorFromConfig();
+            LoadStartupFromConfig();
             UpdateActivationUi();
             UpdateActivationMetaUi();
         }
@@ -65,6 +76,7 @@ internal sealed partial class MainSettingsForm : Form
         {
             _suppressActivationPersist = false;
             _suppressBehaviorPersist = false;
+            _suppressStartupPersist = false;
         }
     }
 
@@ -87,9 +99,10 @@ internal sealed partial class MainSettingsForm : Form
         {
             Dock = DockStyle.Fill,
             ColumnCount = 1,
-            RowCount = 8,
+            RowCount = 9,
             Padding = new Padding(12)
         };
+        layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -127,6 +140,79 @@ internal sealed partial class MainSettingsForm : Form
             MaximumSize = new Size(680, 0),
             ForeColor = SystemColors.ControlDarkDark
         };
+
+        _startupGroup = new GroupBox
+        {
+            Text = UiStrings.Get("MainSettings_GroupStartup"),
+            AutoSize = true,
+            Dock = DockStyle.Top,
+            Padding = new Padding(10, 8, 10, 8)
+        };
+
+        var startupLayout = new TableLayoutPanel
+        {
+            AutoSize = true,
+            Dock = DockStyle.Top,
+            ColumnCount = 1,
+            Padding = new Padding(0)
+        };
+
+        _autoStartCheckBox = new CheckBox
+        {
+            AutoSize = true,
+            Text = UiStrings.Get("MainSettings_AutoStartWithWindows"),
+            Margin = new Padding(0, 4, 0, 0)
+        };
+        _autoStartCheckBox.CheckedChanged += (_, _) => OnAutoStartChanged();
+
+        _runAsAdminCheckBox = new CheckBox
+        {
+            AutoSize = true,
+            Text = UiStrings.Get("MainSettings_RunAsAdmin"),
+            Margin = new Padding(0, 4, 0, 0)
+        };
+        _runAsAdminCheckBox.CheckedChanged += (_, _) => OnRunAsAdminChanged();
+
+        _startupMisalignmentPanel = new Panel
+        {
+            AutoSize = true,
+            Dock = DockStyle.Top,
+            Visible = false,
+            Margin = new Padding(0, 8, 0, 0)
+        };
+
+        var misalignmentLayout = new TableLayoutPanel
+        {
+            AutoSize = true,
+            Dock = DockStyle.Top,
+            ColumnCount = 1,
+            Padding = new Padding(0)
+        };
+
+        _startupMisalignmentLabel = new Label
+        {
+            AutoSize = true,
+            MaximumSize = new Size(640, 0),
+            ForeColor = SystemColors.ControlDarkDark,
+            Text = UiStrings.Get("Startup_MisalignmentWarning")
+        };
+
+        _reactivateAutoStartButton = new Button
+        {
+            AutoSize = true,
+            Text = UiStrings.Get("Startup_ReactivateAutoStart"),
+            Margin = new Padding(0, 6, 0, 0)
+        };
+        _reactivateAutoStartButton.Click += (_, _) => ReactivateAutoStartRegistration();
+
+        misalignmentLayout.Controls.Add(_startupMisalignmentLabel, 0, 0);
+        misalignmentLayout.Controls.Add(_reactivateAutoStartButton, 0, 1);
+        _startupMisalignmentPanel.Controls.Add(misalignmentLayout);
+
+        startupLayout.Controls.Add(_autoStartCheckBox, 0, 0);
+        startupLayout.Controls.Add(_runAsAdminCheckBox, 0, 1);
+        startupLayout.Controls.Add(_startupMisalignmentPanel, 0, 2);
+        _startupGroup.Controls.Add(startupLayout);
 
         _behaviorGroup = new GroupBox
         {
@@ -278,10 +364,11 @@ internal sealed partial class MainSettingsForm : Form
         layout.Controls.Add(_activationCheckBox, 0, 1);
         layout.Controls.Add(_activationLastModifiedLabel, 0, 2);
         layout.Controls.Add(_statusLabel, 0, 3);
-        layout.Controls.Add(_behaviorGroup, 0, 4);
-        layout.Controls.Add(_listView, 0, 5);
-        layout.Controls.Add(buttons, 0, 6);
-        layout.Controls.Add(_appVersionLabel, 0, 7);
+        layout.Controls.Add(_startupGroup, 0, 4);
+        layout.Controls.Add(_behaviorGroup, 0, 5);
+        layout.Controls.Add(_listView, 0, 6);
+        layout.Controls.Add(buttons, 0, 7);
+        layout.Controls.Add(_appVersionLabel, 0, 8);
 
         settingsPage.Controls.Add(layout);
         Controls.Add(_tabControl);
@@ -294,20 +381,151 @@ internal sealed partial class MainSettingsForm : Form
         // behavior a partir dos controlos ainda nos valores por defeito (apagando a config).
         _suppressActivationPersist = true;
         _suppressBehaviorPersist = true;
+        _suppressStartupPersist = true;
         try
         {
             _activationCheckBox.Checked = _config.Activation.Enabled;
             LoadBehaviorFromConfig();
+            LoadStartupFromConfig();
             RefreshList();
             UpdateListButtonsState();
             UpdateActivationUi();
             UpdateActivationMetaUi();
+            UpdateStartupMisalignmentUi();
         }
         finally
         {
             _suppressActivationPersist = false;
             _suppressBehaviorPersist = false;
+            _suppressStartupPersist = false;
         }
+    }
+
+    private void LoadStartupFromConfig()
+    {
+        AppConfigStore.MergeDefaults(_config);
+        var startup = _config.Startup ?? StartupPreferences.CreateDefault();
+        _autoStartCheckBox.Checked = startup.AutoStartWithWindows;
+        _runAsAdminCheckBox.Checked = startup.RunAsAdmin;
+    }
+
+    private void SyncStartupToConfig()
+    {
+        AppConfigStore.MergeDefaults(_config);
+        _config.Startup!.AutoStartWithWindows = _autoStartCheckBox.Checked;
+        _config.Startup.RunAsAdmin = _runAsAdminCheckBox.Checked;
+    }
+
+    private void OnAutoStartChanged()
+    {
+        if (_suppressStartupPersist)
+            return;
+
+        var previous = _config.Startup?.AutoStartWithWindows ?? false;
+        SyncStartupToConfig();
+        if (!TryApplyAutoStartRegistration(showErrors: true))
+        {
+            _suppressStartupPersist = true;
+            try
+            {
+                _autoStartCheckBox.Checked = previous;
+                SyncStartupToConfig();
+            }
+            finally
+            {
+                _suppressStartupPersist = false;
+            }
+
+            return;
+        }
+
+        PersistAndApply();
+        UpdateStartupMisalignmentUi();
+    }
+
+    private void OnRunAsAdminChanged()
+    {
+        if (_suppressStartupPersist)
+            return;
+
+        var previous = _config.Startup?.RunAsAdmin ?? false;
+        SyncStartupToConfig();
+        PersistAndApply();
+
+        if (previous == _config.Startup!.RunAsAdmin)
+            return;
+
+        var restart = MessageBox.Show(
+            this,
+            UiStrings.Get("Startup_RestartRequiredMessage"),
+            UiStrings.Get("Startup_RestartRequiredTitle"),
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Information);
+
+        if (restart == DialogResult.Yes)
+            RestartApplication();
+    }
+
+    private void ReactivateAutoStartRegistration()
+    {
+        if (!TryApplyAutoStartRegistration(showErrors: true))
+            return;
+
+        UpdateStartupMisalignmentUi();
+        MessageBox.Show(
+            this,
+            UiStrings.Get("Startup_ReactivateAutoStart") + ".",
+            UiStrings.Get("MainSettings_GroupStartup"),
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information);
+    }
+
+    private bool TryApplyAutoStartRegistration(bool showErrors)
+    {
+        try
+        {
+            var executablePath = Environment.ProcessPath ?? Application.ExecutablePath;
+            if (_config.Startup!.AutoStartWithWindows)
+                WindowsStartupRegistration.Register(executablePath);
+            else
+                WindowsStartupRegistration.Unregister();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            if (showErrors)
+            {
+                MessageBox.Show(
+                    this,
+                    UiStrings.Get("Startup_RegistrationFailed") + Environment.NewLine + ex.Message,
+                    UiStrings.Get("MainSettings_ErrorTitle"),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+
+            return false;
+        }
+    }
+
+    private void UpdateStartupMisalignmentUi()
+    {
+        AppConfigStore.MergeDefaults(_config);
+        if (!_config.Startup!.AutoStartWithWindows)
+        {
+            _startupMisalignmentPanel.Visible = false;
+            return;
+        }
+
+        var executablePath = Environment.ProcessPath ?? Application.ExecutablePath;
+        _startupMisalignmentPanel.Visible = !WindowsStartupRegistration.IsRegistered(executablePath);
+    }
+
+    private static void RestartApplication()
+    {
+        var executablePath = Environment.ProcessPath ?? Application.ExecutablePath;
+        Process.Start(new ProcessStartInfo(executablePath) { UseShellExecute = true });
+        Application.Exit();
     }
 
     private void LoadBehaviorFromConfig()
@@ -531,6 +749,7 @@ internal sealed partial class MainSettingsForm : Form
     private void PersistAndApply()
     {
         SyncBehaviorToConfig();
+        SyncStartupToConfig();
         AppConfigStore.MergeDefaults(_config);
         var vr = AppConfigValidator.Validate(_config);
         if (!vr.IsValid)
@@ -551,6 +770,7 @@ internal sealed partial class MainSettingsForm : Form
 
             UpdateActivationUi();
             UpdateActivationMetaUi();
+            UpdateStartupMisalignmentUi();
             _schemaVersionLabel.Text = UiStrings.Format("MainSettings_SchemaVersion", _config.SchemaVersion);
             _onConfigChanged?.Invoke();
         }

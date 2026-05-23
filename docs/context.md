@@ -65,13 +65,19 @@ Estrutura principal:
     "linesPerNotchApprox": 3.0,
     "touchpadSameAsWheel": true,
     "useVScrollFallback": false
+  },
+  "startup": {
+    "autoStartWithWindows": false,
+    "runAsAdmin": false
   }
 }
 ```
+
+- **`startup.autoStartWithWindows`**: registo em `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` (`MouseScrollFixer`).
+- **`startup.runAsAdmin`**: pedido UAC no arranque do executável (opt-in).
 
 ## Limitações e escopo
 
 - Suporte oficial atual: Windows 11.
 - MVP: apenas scroll vertical.
-- Não há hoje implementação de auto start com Windows.
-- Não há modo “executar como administrador” configurável na UI.
+- Arranque automático e execução como administrador configuráveis na UI e em `app-config.json` (feature 002).
