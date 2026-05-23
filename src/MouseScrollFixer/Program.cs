@@ -11,10 +11,13 @@ namespace MouseScrollFixer;
 internal static class Program
 {
     [STAThread]
-    private static void Main()
+    private static void Main(string[] args)
     {
         Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pt-BR");
         Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("pt-BR");
+
+        if (!TryEnsureElevatedIfConfigured(args))
+            return;
 
         if (!SingleInstanceCoordinator.TryAcquireSingleton(out var singletonMutex))
         {
@@ -30,6 +33,45 @@ internal static class Program
         {
             singletonMutex.Dispose();
         }
+    }
+
+    /// <summary>
+    /// RF-006/RF-007: gate UAC antes do mutex; negação continua sem elevação.
+    /// </summary>
+    private static bool TryEnsureElevatedIfConfigured(string[] args)
+    {
+        var store = new AppConfigStore();
+        var loadResult = store.Load();
+        var config = loadResult.Config;
+        AppConfigStore.MergeDefaults(config);
+
+        if (!config.Startup!.RunAsAdmin)
+            return true;
+
+        if (ProcessElevationHelper.IsProcessElevated())
+            return true;
+
+        var executablePath = Environment.ProcessPath ?? Application.ExecutablePath;
+        var elevationArgs = args.Length > 1 ? args.Skip(1) : null;
+        var result = ProcessElevationHelper.TryStartElevatedInstance(executablePath, elevationArgs);
+
+        return result switch
+        {
+            ElevationAttemptResult.ElevatedInstanceStarted => false,
+            ElevationAttemptResult.UserCancelled => ShowUacDeniedAndContinue(),
+            ElevationAttemptResult.Failed => ShowUacDeniedAndContinue(),
+            _ => true
+        };
+    }
+
+    private static bool ShowUacDeniedAndContinue()
+    {
+        MessageBox.Show(
+            UiStrings.Get("Startup_UacDeniedMessage"),
+            UiStrings.Get("Startup_UacDeniedTitle"),
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+        return true;
     }
 
     private static void RunApplication()
@@ -61,7 +103,7 @@ internal static class Program
         var config = loadResult.Config;
         AppConfigStore.MergeDefaults(config);
 
-        // CS-005 / T021: o estado activation.enabled lido do disco é aplicado na sessão (hook se ligado).
+        // CS-005: o estado activation.enabled lido do disco é aplicado na sessão (hook se ligado).
         var session = new ScrollFixerSession(config);
         if (config.Activation.Enabled && !session.HookInstalled)
         {

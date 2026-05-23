@@ -116,4 +116,41 @@ public class AppConfigValidatorTests
         var normalized = AppConfigValidator.NormalizeExecutablePath(" " + temp + " ");
         Assert.Equal(Path.GetFullPath(temp), normalized, StringComparer.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void MergeDefaults_MissingStartup_UsesFalseDefaults()
+    {
+        var c = AppConfig.CreateDefault();
+        c.Startup = null;
+        AppConfigStore.MergeDefaults(c);
+
+        Assert.NotNull(c.Startup);
+        Assert.False(c.Startup!.AutoStartWithWindows);
+        Assert.False(c.Startup.RunAsAdmin);
+        Assert.True(AppConfigValidator.Validate(c).IsValid);
+    }
+
+    [Fact]
+    public void Validate_ExplicitStartupPreferences_IsValid()
+    {
+        var c = AppConfig.CreateDefault();
+        c.Startup = new StartupPreferences
+        {
+            AutoStartWithWindows = true,
+            RunAsAdmin = true
+        };
+        AppConfigStore.MergeDefaults(c);
+        var r = AppConfigValidator.Validate(c);
+        Assert.True(r.IsValid);
+    }
+
+    [Fact]
+    public void CreateDefault_IncludesStartupDefaults()
+    {
+        var c = AppConfig.CreateDefault();
+        AppConfigStore.MergeDefaults(c);
+        Assert.NotNull(c.Startup);
+        Assert.False(c.Startup!.AutoStartWithWindows);
+        Assert.False(c.Startup.RunAsAdmin);
+    }
 }

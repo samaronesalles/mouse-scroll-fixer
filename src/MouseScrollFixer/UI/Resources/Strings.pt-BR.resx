@@ -211,4 +211,34 @@
   <data name="Tray_StartupBalloonText" xml:space="preserve">
     <value>O programa iniciou e está a correr na área de notificação (bandeja). Utilize o ícone para abrir as configurações ou sair.</value>
   </data>
+  <data name="MainSettings_GroupStartup" xml:space="preserve">
+    <value>Arranque</value>
+  </data>
+  <data name="MainSettings_AutoStartWithWindows" xml:space="preserve">
+    <value>Iniciar automaticamente com o Windows</value>
+  </data>
+  <data name="MainSettings_RunAsAdmin" xml:space="preserve">
+    <value>Iniciar sempre como administrador</value>
+  </data>
+  <data name="Startup_MisalignmentWarning" xml:space="preserve">
+    <value>O arranque automático está ativo na configuração, mas o registo no sistema não foi encontrado ou o caminho do executável mudou. Clique em «Reativar arranque automático» para voltar a registar.</value>
+  </data>
+  <data name="Startup_ReactivateAutoStart" xml:space="preserve">
+    <value>Reativar arranque automático</value>
+  </data>
+  <data name="Startup_UacDeniedTitle" xml:space="preserve">
+    <value>Elevação não concedida</value>
+  </data>
+  <data name="Startup_UacDeniedMessage" xml:space="preserve">
+    <value>A execução como administrador foi solicitada, mas o Windows não concedeu elevação (UAC cancelado ou negado). O programa continuará com privilégios normais. A preferência permanece ativa para o próximo arranque.</value>
+  </data>
+  <data name="Startup_RestartRequiredTitle" xml:space="preserve">
+    <value>Reinício necessário</value>
+  </data>
+  <data name="Startup_RestartRequiredMessage" xml:space="preserve">
+    <value>A alteração de «Iniciar sempre como administrador» só produz efeito após reiniciar o MouseScrollFixer. Deseja reiniciar agora?</value>
+  </data>
+  <data name="Startup_RegistrationFailed" xml:space="preserve">
+    <value>Não foi possível atualizar o arranque automático no Windows.</value>
+  </data>
 </root>

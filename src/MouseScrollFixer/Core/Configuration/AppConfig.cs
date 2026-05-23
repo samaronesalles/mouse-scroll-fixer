@@ -18,12 +18,16 @@ internal sealed class AppConfig
     [JsonPropertyName("behavior")]
     public BehaviorProfile? Behavior { get; set; }
 
+    [JsonPropertyName("startup")]
+    public StartupPreferences? Startup { get; set; }
+
     public static AppConfig CreateDefault() =>
         new()
         {
             SchemaVersion = CurrentSchemaVersion,
             Activation = new ActivationPreference { Enabled = false },
             InclusionList = new List<InclusionEntry>(),
-            Behavior = BehaviorProfile.CreateDefault()
+            Behavior = BehaviorProfile.CreateDefault(),
+            Startup = StartupPreferences.CreateDefault()
         };
 }
